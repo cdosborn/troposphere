@@ -120,9 +120,9 @@ define(function(require) {
                 .attr("height", me.height + 40)
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .on("mousemove", mousemove) 
-                .on("mouseover", function() { focus.style("display", null); })
-                .on("mouseout", function() { focus.style("display", "none"); });
+                // .on("mousemove", mousemove) 
+                // .on("mouseover", function() { focus.style("display", null); })
+                // .on("mouseout", function() { focus.style("display", "none"); });
 
           svg.append("path")
             .datum([
@@ -179,7 +179,6 @@ define(function(require) {
               .orient("bottom")
 
           var total_mins = this.resolution * this.points;
-          console.log(total_mins, this.resolution, this.points, this.timeframe)
           switch (total_mins) {
               case 60:
                   xAxis
@@ -215,19 +214,19 @@ define(function(require) {
             .attr("class", "metrics x axis")
             .call(xAxis)
 
-          focus = svg.append("path")
-            .datum([
-                    { x: 0, y: height },
-                    { x: 0, y: 0 },
-            ])
-            .style("display", "none")
-            .attr("class", "metrics x axis line")
-            .attr("d", lineSim);
+          // focus = svg.append("path")
+          //   .datum([
+          //           { x: 0, y: height },
+          //           { x: 0, y: 0 },
+          //   ])
+          //   .style("display", "none")
+          //   .attr("class", "metrics x axis line")
+          //   .attr("d", lineSim);
 
-          function mousemove(){
-              //console.log(d3.mouse(this)[0])
-              focus.attr("transform", "translate(" + Math.max(0, d3.mouse(this)[0]) + ",0)")
-          }
+          // function mousemove(){
+          //     //console.log(d3.mouse(this)[0])
+          //     focus.attr("transform", "translate(" + Math.max(0, d3.mouse(this)[0]) + ",0)")
+          // }
 
           // svg.append("text")
           //   .attr("class", "metrics x axis")

@@ -39,7 +39,7 @@ define(function(require) {
 
         var breadcrumbs = ["1 hour", "1 day", "1 week"].map(function(content) {
             var selectableElement = React.DOM.li({}, React.DOM.a({
-                href: "#",
+                href: "javascript:void(0);",
                 onClick: me.handleClick,
                 ref: "selectedAnchorContent"
             }, content));

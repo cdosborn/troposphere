@@ -9,6 +9,7 @@ define(function(require) {
     var GraphController = function(config) {
         this.container = config.container;
         this.store = new Store();
+        this.graphs = [];
     }
 
     // GraphController.prototype.hide = function() {
@@ -23,29 +24,38 @@ define(function(require) {
     }
     GraphController.prototype.switch = function(uuid, timeframe, cb) {
         var me = this;
-        var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
-        graphs = graphs.map(function(data) {
-            return new data[1]({ 
-                type: data[0], 
-                uuid: uuid,
-                container: me.container,
-                timeframe: timeframe
-            })
-        });
+        var key = {uuid:uuid, timeframe:timeframe}
+        var graphs = this.store.get(key)
 
-        var c = me.container;
-        while (c.childElementCount > 3)
-            c.removeChild(c.firstChild);
+        if (graphs == undefined) {
+            var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
+            graphs = graphs.map(function(data) {
+                return new data[1]({ 
+                    type: data[0], 
+                    uuid: uuid,
+                    container: me.container,
+                    timeframe: timeframe
+                })
+            });
 
-        graphs[0].create(function(){
-            graphs[1].create(function() {
-                graphs[2].create(function() {
-                    graphs[0].show()
-                    graphs[1].show()
-                    graphs[2].show()
+            me.store.set(key, graphs)
+
+            graphs[0].create(function(){
+                graphs[1].create(function() {
+                    graphs[2].create(function() {
+                        me.graphs.forEach(function(g){ g.hide(); })
+                        graphs.forEach(function(g){ g.show(); })
+                        me.graphs = graphs;
+                    })
                 })
             })
-        })
+        } else {
+            me.graphs.forEach(function(g){ g.hide(); })
+            graphs.forEach(function(g){ g.show(); })
+            me.graphs = graphs;
+        }
+
+
     }
     // GraphController.prototype.type = function() {
     //     return this.active.type;
