@@ -6,10 +6,25 @@ define(function(require) {
     var Graph = function(config) {
         config = config || {};
 
+        switch (config.timeframe) {
+            // this.points * this.resolution == 60
+            case "1 hour":
+                this.points = 60;
+                this.resolution = 1;
+                break;
+            // this.points * this.resolution == 60 * 24
+            case "1 day":
+                this.points = 60 * 24;
+                this.resolution = 1;
+                break;
+            // this.points * this.resolution == 60 * 24 * 7
+            case "1 week":
+                this.points = 6 * 24 * 7;
+                this.resolution = 10;
+                break;
+        }
+
         var defaults = {
-            points: 50,
-            resolution: 2, // minutes per point
-            transform: "total",
             data: [],
             width: 700,
             height: 100

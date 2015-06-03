@@ -10,8 +10,7 @@ define(function(require) {
         return {
            graph: null,
            uuid: this.props.instance.get("uuid"),
-           points: 24 * 10,
-           resolution: 6,
+           timeframe: "1 hour",
         };
       },
 
@@ -22,58 +21,36 @@ define(function(require) {
                graph: new GraphController({ 
                    container: document.querySelector("#graph"),
                    uuid: me.state.uuid,
-                   points: me.state.points,
-                   resolution: me.state.resolution
+                   timeframe: me.state.timeframe               
                }), 
            }, function() {
-              me.state.graph.switch(me.state.uuid);
+              this.state.graph.switch(this.state.uuid, this.state.timeframe);
            })
       },
 
       handleClick : function(e) {
-          var day = 60 * 24;
-          var week = 7 * 60 * 24;
-          var me = this;
-          glob = this;
-          var el = this.refs.selectedAnchorContent.getDOMNode()
-          console.log(el.innerHTML)
-          switch (el.innerHTML) {      
-              case "1 day":
-                  me.state.graph.resolution = 6
-                  me.state.graph.points = 24 * 10
-                  break;
-              case "1 week":
-                  me.state.graph.resolution = week / 24 / 7
-                  me.state.graph.points = 24 * 7
-                  break;
-          }
-          me.forceUpdate();
-      },
-
-      onSelect : function(e) {
-        var me = this;
-        this.setState({ uuid : e.target.value }, function() {
-            me.state.graph.switch(me.state.uuid)
-        })
+          this.setState({ timeframe: e.target.innerHTML }, function(){
+              this.state.graph.switch(this.state.uuid, this.state.timeframe);
+          });
       },
 
       render: function() {
         var me = this;
 
-        var breadcrumbs = ["1 day", "1 week"].map(function(content) {
+        var breadcrumbs = ["1 hour", "1 day", "1 week"].map(function(content) {
             var selectableElement = React.DOM.li({}, React.DOM.a({
                 href: "#",
                 onClick: me.handleClick,
                 ref: "selectedAnchorContent"
             }, content));
             var selectedElement = React.DOM.li({
+                id: content,
                 className: "active metrics"
             }, content)
 
-            var isOneDaySelected = me.state.resolution * me.state.points <= 24 * 60;
-
-            if (isOneDaySelected && content == "1 day" || !isOneDaySelected && content == "1 week")
-                   return selectedElement
+            if (content == me.state.timeframe) {
+               return selectedElement
+            }
             return selectableElement
         })
 

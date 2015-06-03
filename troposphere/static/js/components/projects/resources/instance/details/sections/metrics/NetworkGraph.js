@@ -178,20 +178,33 @@ define(function(require) {
               .scale(x)
               .orient("bottom")
 
-          if (this.resolution * this.points <= 24 * 60) {
-              xAxis
-                  .ticks(12)
-                  .tickFormat(function(){
-                      return d3.time.format("%_I%p")
-                                    .apply(d3.time, arguments)
-                                    .toLowerCase()
-                  })
-          } else {
-              xAxis
-                  .ticks(7)
-                  .tickFormat(d3.time.format("%a"))
+          var total_mins = this.resolution * this.points;
+          console.log(total_mins, this.resolution, this.points, this.timeframe)
+          switch (total_mins) {
+              case 60:
+                  xAxis
+                      .ticks(6)
+                      .tickFormat(function(){
+                          return d3.time.format("%_I:%M%p")
+                                        .apply(d3.time, arguments)
+                                        .toLowerCase()
+                      })
+                  break;  
+              case 60 * 24:
+                  xAxis
+                      .ticks(12)
+                      .tickFormat(function(){
+                          return d3.time.format("%_I%p")
+                                        .apply(d3.time, arguments)
+                                        .toLowerCase()
+                      })
+                  break;  
+              case 60 * 24 * 7:
+                  xAxis
+                      .ticks(7)
+                      .tickFormat(d3.time.format("%a"))
+                  break;
           }
- 
 
           svg.append("g")
             .attr("class", "metrics y axis")

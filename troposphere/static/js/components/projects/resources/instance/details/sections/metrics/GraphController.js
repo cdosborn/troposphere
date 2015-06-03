@@ -8,12 +8,6 @@ define(function(require) {
 
     var GraphController = function(config) {
         this.container = config.container;
-        this.active = {
-            type: config.type || "",
-            uuid: config.uuid
-        };
-        this.resolution = config.resolution;
-        this.points = config.points;
         this.store = new Store();
     }
 
@@ -27,7 +21,7 @@ define(function(require) {
             g.removeChild(g.lastChild);
         } 
     }
-    GraphController.prototype.switch = function(uuid, cb) {
+    GraphController.prototype.switch = function(uuid, timeframe, cb) {
         var me = this;
         var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
         graphs = graphs.map(function(data) {
@@ -35,8 +29,7 @@ define(function(require) {
                 type: data[0], 
                 uuid: uuid,
                 container: me.container,
-                resolution: me.resolution,
-                points: me.points
+                timeframe: timeframe
             })
         });
 
