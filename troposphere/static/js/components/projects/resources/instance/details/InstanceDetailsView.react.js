@@ -5,6 +5,7 @@ define(function (require) {
       BreadcrumbBar = require('components/projects/common/BreadcrumbBar.react'),
       InstanceInfoSection = require('./sections/InstanceInfoSection.react'),
       InstanceDetailsSection = require('./sections/InstanceDetailsSection.react'),
+      InstanceDetailsSection = require('./sections/InstanceMetricsSection.react'),
       InstanceActionsAndLinks = require('./actions/InstanceActionsAndLinks.react'),
       stores = require('stores');
 
@@ -42,6 +43,8 @@ define(function (require) {
               <InstanceInfoSection instance={instance}/>
               <hr/>
               <InstanceDetailsSection instance={instance}/>
+              <hr/>
+              <InstanceMetricsSection instance={instance}/>
               <hr/>
             </div>
             <div className="col-md-3">

@@ -24,6 +24,9 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min',
       '../bower_components/bootstrap/dist/js/bootstrap.min'
     ],
+    d3: [
+      'https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min'
+    ],
     moment: [
       '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min',
       '../bower_components/moment/moment'

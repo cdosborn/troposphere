@@ -48,6 +48,7 @@ def _apply_token_to_session(request, token):
 
 
 def login(request):
+    return redirect('cas_oauth_service')
     all_backends = settings.AUTHENTICATION_BACKENDS
     if "troposphere.auth_backends.MockLoginBackend" in all_backends:
         return _mock_login(request)
@@ -88,6 +89,9 @@ def cas_oauth_service(request):
 
     code_service_ticket = request.GET['code']
     access_token, expiry_date = cas_oauth_client.get_access_token(code_service_ticket)
+
+    if hasattr(settings, "CAS_DEV_TOKEN"):
+        access_token = settings.CAS_DEV_TOKEN
 
     if not access_token:
         #code_service_ticket has expired (They don't last very long...)
