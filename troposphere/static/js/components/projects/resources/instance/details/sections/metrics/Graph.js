@@ -40,6 +40,7 @@ define(function(require) {
         }
 
         this.element = document.createElement("div");
+        this.element.style.display = "none";
         this.container.appendChild(this.element);
     }
 
