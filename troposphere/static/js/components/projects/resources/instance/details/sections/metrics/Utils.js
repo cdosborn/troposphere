@@ -4,7 +4,7 @@ define(function(require) {
     // fetch(10, 60,"perSecond(stats.*.*51.tx)", function(a,b) 
     var fetch = function(points, resolution, expression, callback) {
           var now, then, step, host;
-          host = "http://monarch.iplantc.org:8080";
+          host = "http://monarch.iplantc.org";
 
           now = Date.now();
           then = (now / 1000) - points * 60 * resolution  - 4 * 60 * resolution // add 4 more points
