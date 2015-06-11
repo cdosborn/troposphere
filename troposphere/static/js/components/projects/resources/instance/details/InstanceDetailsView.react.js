@@ -44,8 +44,9 @@ define(function (require) {
               <hr/>
               <InstanceDetailsSection instance={instance}/>
               <hr/>
-              <InstanceMetricsSection instance={instance}/>
-              <hr/>
+              { 
+                show_instance_metrics ?  <div><InstanceMetricsSection instance={instance}/><hr/></div> : <div></div>
+              }
             </div>
             <div className="col-md-3">
               <InstanceActionsAndLinks
