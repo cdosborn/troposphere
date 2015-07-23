@@ -48,7 +48,6 @@ def _apply_token_to_session(request, token):
 
 
 def login(request):
-    return redirect('cas_oauth_service')
     all_backends = settings.AUTHENTICATION_BACKENDS
     if "troposphere.auth_backends.MockLoginBackend" in all_backends:
         return _mock_login(request)
