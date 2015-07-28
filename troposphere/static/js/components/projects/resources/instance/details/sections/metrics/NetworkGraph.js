@@ -73,7 +73,7 @@ define(function(require) {
           var yAxisWidth = 50,
               // margin = {top: 5, right: 20, bottom: 50, left: yAxisWidth},
               // margin = {top: 10, right: 20, bottom: 30, left: yAxisWidth},
-              margin = {top: 10, right: 20, bottom: 5, left: yAxisWidth},
+              margin = {top: 10, right: 0, bottom: 5, left: yAxisWidth},
               width = this.width - margin.left - margin.right,
               height = this.height - margin.top - margin.bottom;
 
