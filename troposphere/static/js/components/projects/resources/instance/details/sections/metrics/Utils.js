@@ -2,32 +2,72 @@ define(function(require) {
 
     // fetch 10 hours,perSecond(stats.*.*51.tx), "sum" 
     // fetch(10, 60,"perSecond(stats.*.*51.tx)", function(a,b) 
-    var fetch = function(points, resolution, expression, callback) {
-          var now, then, step, host;
-          host = hyper_stats_url; // Global from django template
+    // var fetch = function(points, resolution, expression, callback) {
+    //       var now, then, step, host;
+    //       host = hyper_stats_url; // Global from django template
 
-          now = Date.now();
-          then = (now / 1000) - points * 60 * resolution  - 4 * 60 * resolution // add 4 more points
+    //       now = Date.now();
+    //       then = (now / 1000) - points * 60 * resolution  - 4 * 60 * resolution // add 4 more points
 
-          // Apply the summarize, if resolution is greater than 1 (minute)
-          if (resolution > 1) expression = "summarize(" + expression + ",'"
-              + (!(resolution % 60) ? resolution / 60 + "hour" : resolution + "min")
-              + "','avg')";
+    //       // Apply the summarize, if resolution is greater than 1 (minute)
+    //       if (resolution > 1) expression = "summarize(" + expression + ",'"
+    //           + (!(resolution % 60) ? resolution / 60 + "hour" : resolution + "min")
+    //           + "','avg')";
 
-          var req = host + "/render?format=json"
-          + "&target=" + encodeURIComponent(expression)
-          + "&from=" + Math.floor(then)
+    //       var req = host + "/render?format=json"
+    //       + "&target=" + encodeURIComponent(expression)
+    //       + "&from=" + Math.floor(then)
 
-          d3.text(req, function(text) {
-            if (!text) return callback(new Error("unable to load data"));
-            var json = JSON.parse(text);
-            var data = json[0].datapoints.slice(1) // trim first
-            data.length = points;                 // trim extra tail, in case 
-            callback(null, data.map(function(arr) {
-              return { x: arr[1] * 1000, y: arr[0] };
-            }));
-          });
+    //       d3.text(req, function(text) {
+    //         if (!text) return callback(new Error("unable to load data"));
+    //         var json = JSON.parse(text);
+    //         var data = json[0].datapoints.slice(1) // trim first
+    //         data.length = points;                 // trim extra tail, in case 
+    //         callback(null, data.map(function(arr) {
+    //           return { x: arr[1] * 1000, y: arr[0] };
+    //         }));
+    //       });
+    // }
+
+    var fetch = function(uuid, urlParams, callback) {
+        var api = API_V2_ROOT + "/metrics"
+
+        var req = api + "/" + uuid + ".json" +
+            "?field=" + urlParams.field +
+            "&res="   + urlParams.res   +
+            "&size="  + urlParams.size;
+
+        if (urlParams.fun)
+            req += "&fun=" + urlParams.fun;
+            // req += "&fun=derivative"// + urlParams.fun;
+
+        // console.log(req);
+
+        d3.json(req)
+            .header("Authorization", "Token " + access_token)
+            .get(function(error, json) {
+
+                if (!json) return callback(new Error("unable to load data"));
+
+                var data = json[0].datapoints
+                data.length = urlParams.size;
+
+                callback(null, data.map(function(arr) {
+                    return { x: arr[1] * 1000, y: arr[0] };
+                }));
+
+                console.log(req, data);
+            })
+        // d3.text(req, function(text) {
+        //     var json = JSON.parse(text);
+        //     var data = json[0].datapoints.slice(1) // trim first
+        //     data.length = points;                 // trim extra tail, in case 
+        //     callback(null, data.map(function(arr) {
+        //         return { x: arr[1] * 1000, y: arr[0] };
+        //     }));
+        // });
     }
+
 
     var bytesToString = function (bytes) {
         var fmt = d3.format('.0f'),
@@ -76,6 +116,7 @@ define(function(require) {
     // }
     var get = function(name) { 
         return function(obj) {
+          // console.log("INSIDE GET", "obj:", obj, "prop:", name);
           return obj[name];
         };
     };

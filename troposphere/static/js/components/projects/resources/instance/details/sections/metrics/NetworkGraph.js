@@ -9,11 +9,13 @@ define(function(require) {
           type : "net",
           upper : {
             query: "*.*." + settings.uuid + ".rx",
+            type: "rx",
             data: [],
             transform: "derivative",
           },
           lower : {
             query: "*.*." + settings.uuid + ".tx",
+            type: "tx",
             data: [],
             transform: "derivative",
           }
@@ -37,16 +39,24 @@ define(function(require) {
         var me = this;
         var series = [ this.upper, this.lower ];
 
-        var queries = series.map(function(s) { 
-          if (s.transform == "derivative") {
-            return "perSecond(" + s.query + ")"
-          }
-          return s.query;
+        series.forEach(function(s) { 
+            s.urlParams = {
+                field: s.type,
+                res: me.resolution,
+                size: me.points,
+            };
+
+            if (s.transform == "derivative")
+                s.urlParams.fun = "perSecond";
+            else
+                s.urlParams.fun = "";
         });
 
-        Utils.fetch(me.points, me.resolution, queries[0], function(err, data) {
+        // console.log("uuid?", series[0]);
+        // console.log("me?", this);
+        Utils.fetch(me.uuid, series[0].urlParams, function(err, data) {
           series[0].data = data;
-          Utils.fetch(me.points, me.resolution, queries[1], function(err, data) {
+          Utils.fetch(me.uuid, series[1].urlParams, function(err, data) {
             series[1].data = data;
             cb.call(me);
           }) 
@@ -213,6 +223,24 @@ define(function(require) {
             .attr("transform", "translate(0," + (height + margin.top + 15) +  ")")
             .attr("class", "metrics x axis")
             .call(xAxis)
+
+          svg.append("text")
+            .attr("class", "metrics x axis")
+            .attr("style", "text-anchor:end")
+            .attr("x", width)
+            .attr("y", 0)
+            .attr("dy", ".32em")
+            // .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
+            .text(me.upper.type)
+
+          svg.append("text")
+            .attr("class", "metrics x axis")
+            .attr("style", "text-anchor:end")
+            .attr("x", width)
+            .attr("y", height)
+            .attr("dy", ".32em")
+            // .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
+            .text(me.lower.type)
 
           // focus = svg.append("path")
           //   .datum([

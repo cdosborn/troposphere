@@ -19,8 +19,8 @@ define(function(require) {
                 break;
             // this.points * this.resolution == 60 * 24 * 7
             case "1 week":
-                this.points = 6 * 24 * 7;
-                this.resolution = 10;
+                this.points = 24 * 7;
+                this.resolution = 60;
                 break;
         }
 
@@ -75,17 +75,22 @@ define(function(require) {
     }
     Graph.prototype.fetch = function(cb) {
         var me = this;
-        var query = "*.*." + this.uuid + "." + this.type
-
-        if (this.transform == "derivative") {
-          query = "perSecond(" + query + ")"
+        var urlParams =  {
+            field: this.type,
+            res: this.resolution,
+            size: this.points,
         }
 
-        Utils.fetch(this.points, this.resolution, query, function(err, data) {
+        if (this.transform == "derivative") {
+            urlParams.fun = "perSecond";
+        }
+
+        Utils.fetch(this.uuid, urlParams, function(err, data) {
             me.data = data;
             cb();
         });
     }
+
     Graph.prototype.make = function() {
           var me = this;
           var data = this.data
@@ -93,7 +98,7 @@ define(function(require) {
             
           var yAxisWidth = 50,
               // margin = {top: 10, right: 20, bottom: 30, left: yAxisWidth},
-              margin = {top: 10, right: 20, bottom: 5, left: yAxisWidth},
+              margin = {top: 10, right: 0, bottom: 5, left: yAxisWidth},
               width = this.width - margin.left - margin.right,
               height = this.height - margin.top - margin.bottom;
 
@@ -174,11 +179,14 @@ define(function(require) {
             .attr("class", "metrics y axis")
             .call(yAxis)
 
-          // svg.append("text")
-          //   .attr("class", "metrics x axis")
-          //   .attr("style", "text-anchor:middle")
-          //   .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
-          //   .text(secondsToStringSince(data[data.length - 1].x)(data[0].x))
+          svg.append("text")
+            .attr("class", "metrics x axis")
+            .attr("style", "text-anchor:end")
+            .attr("x", width)
+            .attr("y", 0)
+            .attr("dy", ".32em")
+            // .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
+            .text(function() { return me.type; })
     }
 
     return Graph;
