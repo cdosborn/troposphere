@@ -30,42 +30,38 @@ define(function(require) {
     // }
 
     var fetch = function(uuid, urlParams, callback) {
-        var api = API_V2_ROOT + "/metrics"
+        var api = API_V2_ROOT + "/metrics";
+
+        // Request extra datapoints to account for occasional null data at
+        // front/end
+        var extra = 2;
 
         var req = api + "/" + uuid + ".json" +
             "?field=" + urlParams.field +
             "&res="   + urlParams.res   +
-            "&size="  + urlParams.size;
+            "&size="  + (urlParams.size + extra);
 
         if (urlParams.fun)
             req += "&fun=" + urlParams.fun;
-            // req += "&fun=derivative"// + urlParams.fun;
-
-        // console.log(req);
 
         d3.json(req)
             .header("Authorization", "Token " + access_token)
             .get(function(error, json) {
 
                 if (!json) return callback(new Error("unable to load data"));
-
                 var data = json[0].datapoints
+
+                // Trim initial/final null values
+                if (data[0][0] == null)
+                    data.splice(1);
                 data.length = urlParams.size;
 
                 callback(null, data.map(function(arr) {
                     return { x: arr[1] * 1000, y: arr[0] };
                 }));
 
-                console.log(req, data);
+                // console.log(req, data);
             })
-        // d3.text(req, function(text) {
-        //     var json = JSON.parse(text);
-        //     var data = json[0].datapoints.slice(1) // trim first
-        //     data.length = points;                 // trim extra tail, in case 
-        //     callback(null, data.map(function(arr) {
-        //         return { x: arr[1] * 1000, y: arr[0] };
-        //     }));
-        // });
     }
 
 
