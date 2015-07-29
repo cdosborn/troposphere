@@ -53,14 +53,14 @@ define(function(require) {
 
                 // Trim initial/final null values
                 if (data[0][0] == null)
-                    data.splice(1);
+                    data.splice(0, 1);
                 data.length = urlParams.size;
 
+                console.log(req, data);
                 callback(null, data.map(function(arr) {
                     return { x: arr[1] * 1000, y: arr[0] };
                 }));
 
-                // console.log(req, data);
             })
     }
 

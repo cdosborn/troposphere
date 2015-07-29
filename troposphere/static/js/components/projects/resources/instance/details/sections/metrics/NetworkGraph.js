@@ -69,11 +69,10 @@ define(function(require) {
           var data = me.lower.data;
           var rxData = me.upper.data;
           var txData = me.lower.data;
-            
-          var yAxisWidth = 50,
-              // margin = {top: 5, right: 20, bottom: 50, left: yAxisWidth},
-              // margin = {top: 10, right: 20, bottom: 30, left: yAxisWidth},
-              margin = {top: 10, right: 0, bottom: 5, left: yAxisWidth},
+
+          var metricsAxisHeight = 20,
+              yAxisWidth = 50,
+              margin = {top: 10, right: 20, bottom: 0, left: yAxisWidth},
               width = this.width - margin.left - margin.right,
               height = this.height - margin.top - margin.bottom;
 
@@ -127,7 +126,7 @@ define(function(require) {
 
           var svg = d3.select(graphDom).append("svg")
                 .attr("width", me.width)
-                .attr("height", me.height + 40)
+                .attr("height", me.height + metricsAxisHeight + 30)
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                 // .on("mousemove", mousemove) 
@@ -220,7 +219,7 @@ define(function(require) {
             .call(yAxis)
 
           svg.append("g")
-            .attr("transform", "translate(0," + (height + margin.top + 15) +  ")")
+            .attr("transform", "translate(0," + (this.height + metricsAxisHeight) + ")")
             .attr("class", "metrics x axis")
             .call(xAxis)
 
@@ -230,8 +229,7 @@ define(function(require) {
             .attr("x", width)
             .attr("y", 0)
             .attr("dy", ".32em")
-            // .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
-            .text(me.upper.type)
+            .text("data in")
 
           svg.append("text")
             .attr("class", "metrics x axis")
@@ -239,28 +237,7 @@ define(function(require) {
             .attr("x", width)
             .attr("y", height)
             .attr("dy", ".32em")
-            // .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
-            .text(me.lower.type)
-
-          // focus = svg.append("path")
-          //   .datum([
-          //           { x: 0, y: height },
-          //           { x: 0, y: 0 },
-          //   ])
-          //   .style("display", "none")
-          //   .attr("class", "metrics x axis line")
-          //   .attr("d", lineSim);
-
-          // function mousemove(){
-          //     //console.log(d3.mouse(this)[0])
-          //     focus.attr("transform", "translate(" + Math.max(0, d3.mouse(this)[0]) + ",0)")
-          // }
-
-          // svg.append("text")
-          //   .attr("class", "metrics x axis")
-          //   .attr("style", "text-anchor:middle")
-          //   .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
-          //   .text(secondsToStringSince(data[data.length - 1].x)(data[0].x))
+            .text("data out")
     }
 
     return NetworkGraph;

@@ -14,8 +14,8 @@ define(function(require) {
                 break;
             // this.points * this.resolution == 60 * 24
             case "1 day":
-                this.points = 60 * 24;
-                this.resolution = 1;
+                this.points = 6 * 24;
+                this.resolution = 10;
                 break;
             // this.points * this.resolution == 60 * 24 * 7
             case "1 week":
@@ -26,7 +26,7 @@ define(function(require) {
 
         var defaults = {
             data: [],
-            width: 700,
+            width: 610,
             height: 100
         }
 
@@ -56,14 +56,6 @@ define(function(require) {
     Graph.prototype.hide = function() {
         this.element.style.display = "none";
     }
-    // Graph.prototype.feed = function(data) {
-    //     var save;
-    //     if (data.length < this.points) {
-    //         save = this.points - data.length 
-    //         this.data = this.data.slice(-save).concat(data);
-    //     }
-    //     this.data = data.slice(-this.points);
-    // }
     Graph.prototype.show = function() {
         this.element.style.display = "inline";
     }
@@ -97,8 +89,7 @@ define(function(require) {
           var graphDom = this.element;
             
           var yAxisWidth = 50,
-              // margin = {top: 10, right: 20, bottom: 30, left: yAxisWidth},
-              margin = {top: 10, right: 0, bottom: 5, left: yAxisWidth},
+              margin = {top: 10, right: 20, bottom: 5, left: yAxisWidth},
               width = this.width - margin.left - margin.right,
               height = this.height - margin.top - margin.bottom;
 
@@ -160,21 +151,6 @@ define(function(require) {
               .scale(y)
               .orient("left");
 
-    //       var xAxis = d3.svg.axis()
-    //           .tickFormat(function(d, i) {
-    //               if (i == 0)
-    //                   return secondsToString(d)
-    //               return "now"
-    //           })
-    //           .tickValues([xMax - (0.8 * (xMax - xMin)), xMax])
-    //           .scale(x)
-    //           .orient("bottom");
-
-    //       svg.append("g")
-    //         .attr("class", "metrics x axis")
-    //         .attr("transform", "translate(0," + ( height ) + ")")
-    //         .call(xAxis)
-
           svg.append("g")
             .attr("class", "metrics y axis")
             .call(yAxis)
@@ -185,8 +161,7 @@ define(function(require) {
             .attr("x", width)
             .attr("y", 0)
             .attr("dy", ".32em")
-            // .attr("transform", "translate(" + (0.5 * width) + "," + (height + margin.top + 15) +  ")")
-            .text(function() { return me.type; })
+            .text( me.type == "cpu" ? "cpu usage": "memory usage")
     }
 
     return Graph;

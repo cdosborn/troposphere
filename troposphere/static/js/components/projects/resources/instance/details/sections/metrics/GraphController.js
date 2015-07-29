@@ -22,33 +22,43 @@ define(function(require) {
             g.removeChild(g.lastChild);
         } 
     }
-    GraphController.prototype.switch = function(uuid, timeframe, cb) {
+    GraphController.prototype.switch = function(settings, cb) {
         var me = this;
-        var key = {uuid:uuid, timeframe:timeframe}
-        var graphs = this.store.get(key)
 
-        if (graphs == undefined) {
+        var key = {
+            uuid: settings.uuid, 
+            timeframe: settings.timeframe
+        }
+        var graphs = this.store.get(key);
+
+        // Fetch data/build graphs for a timeframe
+        if (graphs == undefined || settings.refresh) {
             var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
             graphs = graphs.map(function(data) {
                 return new data[1]({ 
                     type: data[0], 
-                    uuid: uuid,
+                    uuid: settings.uuid,
                     container: me.container,
-                    timeframe: timeframe
+                    timeframe: settings.timeframe
                 })
             });
 
             me.store.set(key, graphs)
+            me.timestamp = new Date();
+            me.graphs.forEach(function(g){ g.hide(); })
+            document.querySelector(".metrics > .loading").style.display = "inherit";
 
             graphs[0].create(function(){
                 graphs[1].create(function() {
                     graphs[2].create(function() {
-                        me.graphs.forEach(function(g){ g.hide(); })
+                        document.querySelector(".metrics > .loading").style.display = "none";
+                        // me.graphs.forEach(function(g){ g.hide(); })
                         graphs.forEach(function(g){ g.show(); })
                         me.graphs = graphs;
                     })
                 })
             })
+
         } else {
             me.graphs.forEach(function(g){ g.hide(); })
             graphs.forEach(function(g){ g.show(); })
@@ -57,30 +67,6 @@ define(function(require) {
 
 
     }
-    // GraphController.prototype.type = function() {
-    //     return this.active.type;
-    // }
-    // GraphController.prototype.refresh = function() {
-    //     var cur = this.store.get({ 
-    //         type: this.active.type, 
-    //         uuid: this.active.uuid 
-    //     });
-    //     cur.fetch(function() {
-    //         cur.clear(); 
-    //         cur.make();
-    //     })
-    //     // this.switch(this.active.uuid, this.active.type, true);
-    // }
-    // GraphController.prototype.makeGraph = function(settings) {
-    //     switch (settings.type) {
-    //         case "cpu" : 
-    //             return new CPUGraph(settings)
-    //         case "mem" : 
-    //             return new MemoryGraph(settings)
-    //         case "net" : 
-    //             return new NetworkGraph(settings)
-    //     }
-    // }
 
     return GraphController;
 });

@@ -24,13 +24,28 @@ define(function(require) {
                    timeframe: me.state.timeframe               
                }), 
            }, function() {
-              this.state.graph.switch(this.state.uuid, this.state.timeframe);
+              this.state.graph.switch({ 
+                  uuid: this.state.uuid, 
+                  timeframe: this.state.timeframe
+              });
            })
+      },
+
+      refresh: function() {
+          this.state.graph.switch({ 
+              uuid: this.state.uuid, 
+              timeframe: this.state.timeframe,
+              refresh: true,
+          });
       },
 
       handleClick : function(e) {
           this.setState({ timeframe: e.target.innerHTML }, function(){
-              this.state.graph.switch(this.state.uuid, this.state.timeframe);
+              this.state.graph.switch({ 
+                  uuid: this.state.uuid, 
+                  timeframe: this.state.timeframe
+              });
+
           });
       },
 
@@ -43,6 +58,7 @@ define(function(require) {
                 onClick: me.handleClick,
                 ref: "selectedAnchorContent"
             }, content));
+                
             var selectedElement = React.DOM.li({
                 id: content,
                 className: "active metrics"
@@ -54,19 +70,38 @@ define(function(require) {
             return selectableElement
         })
 
+        breadcrumbs.push(React.DOM.span({
+            id: "refresh", 
+            className: "glyphicon glyphicon-refresh",
+            onClick: me.refresh,
+            style: { padding: '0 0 0 15px' }
+        }));
+
         return React.DOM.div(null,
-            React.DOM.div({className : "resource-details-section section"},
-                React.DOM.h4({class : "title"}, "Instance Metrics"),
+            React.DOM.div({className: "resource-details-section section"},
+                React.DOM.h4({
+                    className: "title"}
+                , "Instance Metrics"),
 
-                React.DOM.ol({
-                    id: "controls",
-                    className: "metrics breadcrumb" 
-                }, breadcrumbs), 
+                React.DOM.div({
+                    id: "container",
+                    className: "metrics"
+                },[
+                    React.DOM.ol({
+                        id: "controls",
+                        className: "metrics breadcrumb" 
+                    }, breadcrumbs), 
 
-                React.DOM.div({ 
-                    id:"graph",
-                    className:"metrics"
-                })
+                    React.DOM.div({ 
+                        id:"graph",
+                        className:"metrics"
+                    }),
+
+                    React.DOM.div({ 
+                        className:"loading",
+                        style: { display: "none" }
+                    })
+                ])
             )
         )
       }
