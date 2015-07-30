@@ -183,6 +183,7 @@ define(function(require) {
               .scale(y)
               .orient("left");
 
+
           var xAxis = d3.svg.axis()
               .scale(x)
               .orient("bottom")
@@ -213,6 +214,15 @@ define(function(require) {
                       .tickFormat(d3.time.format("%a"))
                   break;
           }
+
+          var middleAxis = d3.svg.line()
+              .x(function(d) { return x(d.x); })
+              .y(function(d) { return y(0); });
+
+          svg.append("path")
+              .datum(data)
+              .attr("class", "metrics x line")
+              .attr("d", middleAxis)
 
           svg.append("g")
             .attr("class", "metrics y axis")

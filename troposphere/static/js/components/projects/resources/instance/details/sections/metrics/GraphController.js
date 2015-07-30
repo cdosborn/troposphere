@@ -12,27 +12,23 @@ define(function(require) {
         this.graphs = [];
     }
 
-    // GraphController.prototype.hide = function() {
-    //     var durp = this.store.get(this.active)
-    //     durp && durp.hide();
-    // }
-    GraphController.prototype.clearContainer = function() {
-        var g = this.container;
-        while (g.lastChild) {
-            g.removeChild(g.lastChild);
-        } 
-    }
     GraphController.prototype.switch = function(settings, cb) {
         var me = this;
+
+        // Forcing a refresh is equivalent to emptying the store so that data
+        // must be fetched
+        if (settings.refresh)
+            this.store.removeAll();
 
         var key = {
             uuid: settings.uuid, 
             timeframe: settings.timeframe
         }
+
         var graphs = this.store.get(key);
 
         // Fetch data/build graphs for a timeframe
-        if (graphs == undefined || settings.refresh) {
+        if (graphs == undefined) {
             var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
             graphs = graphs.map(function(data) {
                 return new data[1]({ 

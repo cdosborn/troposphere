@@ -29,22 +29,30 @@
 }
 
 #container.metrics {
+    $soft_black: #777;
     margin: auto;
     width: 650px;
     min-height: 600px;
+    text-align: right;
 
-    #controls {
-        float: right;
+    #controls-container {
+        margin-bottom: 30px;
+        color: $soft_black;
 
-        #refresh.disabled {
-            // color: $brand-primary;
-        }
-        #refresh:not(.disabled) {
-            color: $brand-primary;
-        }
-        #refresh:hover:not(.disabled) {
-            color: #376a15;
-            cursor: pointer;
+        #controls {
+            margin-bottom: 0px;
+            display: inline-block;
+
+            #refresh.disabled {
+                // color: $brand-primary;
+            }
+            #refresh:not(.disabled) {
+                color: $brand-primary;
+            }
+            #refresh:hover:not(.disabled) {
+                color: #376a15;
+                cursor: pointer;
+            }
         }
     }
     #graph {
@@ -56,8 +64,12 @@
         margin: 0 auto;
     }
 
+    .x.line {
+      stroke: $soft_black;
+    }
+
     .y.axis, .x.axis {
-      fill: #AAA;
+      fill: $soft_black;
       font: 14px/1.4 Helvetica,arial,nimbussansl,liberationsans,freesans,clean,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";            
     }
     svg {

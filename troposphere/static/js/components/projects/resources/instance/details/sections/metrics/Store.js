@@ -1,5 +1,6 @@
 define(function(require) {
 
+    // Never return the inner datastruct data. This module depends on that assumption.
     var Store = function() {
         var data = {};
         glob = data;
@@ -15,6 +16,9 @@ define(function(require) {
         }
         this.remove = function(key) {
             delete data[JSON.stringify(key)];
+        }
+        this.removeAll = function(key) {
+            data = []; 
         }
 
     }
