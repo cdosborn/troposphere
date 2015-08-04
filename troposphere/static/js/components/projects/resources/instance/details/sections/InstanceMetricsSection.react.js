@@ -2,8 +2,7 @@
 
 define(function(require) {
     var React = require('react'),
-        GraphController = require('./metrics/GraphController'),
-        LastUpdatedComponent = require('./metrics/LastUpdatedComponent.react');
+        GraphController = require('./metrics/GraphController');
 
     return React.createClass({ 
 
@@ -15,7 +14,7 @@ define(function(require) {
                 me.setState({
                     canRefresh: true,
                 }); 
-            }, 1000 * 3);
+            }, 1000 * 60);
 
             return { 
                 graph: null, 
@@ -44,24 +43,24 @@ define(function(require) {
       refresh: function() {
           var me = this;
             // Disable refresh button
-          me.setState({
-              canRefresh: false,
-          }, function() {
+            me.setState({
+                canRefresh: false,
+            }, function() {
 
-              this.state.graph.switch({ 
-                  uuid: this.state.uuid, 
-                  timeframe: this.state.timeframe,
-                  refresh: true,
-              });
+                this.state.graph.switch({ 
+                    uuid: this.state.uuid, 
+                    timeframe: this.state.timeframe,
+                    refresh: true,
+                });
 
-              // Enable refresh in a minute
-              setTimeout(function(){
-                  me.setState({
-                      canRefresh: true,
-                  }); 
-              }, 1000 * 3); 
+                // Enable refresh in a minute
+                setTimeout(function(){
+                    me.setState({
+                        canRefresh: true,
+                    }); 
+                }, 1000 * 60); 
 
-          })
+            })
       },
 
       handleClick : function(e) {
@@ -98,7 +97,10 @@ define(function(require) {
             id: "refresh", 
             className: "glyphicon glyphicon-refresh" + 
                 (this.state.canRefresh ? "" : " disabled"),
-            onClick: me.refresh,
+            onClick: function() {
+                if (me.state.canRefresh) 
+                    me.refresh();
+            },
             style: { padding: '0 0 0 15px' }
         }));
 
@@ -119,21 +121,17 @@ define(function(require) {
                             id: "controls",
                             className: "metrics breadcrumb" 
                         }, breadcrumbs), 
-
-                        React.createElement(LastUpdatedComponent, {
-                            timestamp: Date.now(),
-                        }),
                     ]),
 
                     React.DOM.div({ 
                         id:"graph",
                         className:"metrics"
-                    }),
-
-                    React.DOM.div({ 
-                        className:"loading",
+                    }, [
+                        React.DOM.div({ 
+                            className:"loading",
                         style: { display: "none" }
-                    })
+                        })
+                    ])
                 ])
             )
         )

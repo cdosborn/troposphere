@@ -29,26 +29,36 @@ define(function(require) {
 
         // Fetch data/build graphs for a timeframe
         if (graphs == undefined) {
+
+            this.timestamp = new Date();
+
             var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
             graphs = graphs.map(function(data) {
                 return new data[1]({ 
                     type: data[0], 
                     uuid: settings.uuid,
+                    timestamp: me.timestamp,
                     container: me.container,
                     timeframe: settings.timeframe
                 })
             });
 
             me.store.set(key, graphs)
-            me.timestamp = new Date();
+
+            // Hide current graphs
             me.graphs.forEach(function(g){ g.hide(); })
+             
+            // Show spinning loader
             document.querySelector(".metrics > .loading").style.display = "inherit";
 
             graphs[0].create(function(){
                 graphs[1].create(function() {
                     graphs[2].create(function() {
+
+                        // Hide spinning loader
                         document.querySelector(".metrics > .loading").style.display = "none";
-                        // me.graphs.forEach(function(g){ g.hide(); })
+                        graphs[2].makeAxis();
+                        graphs[2].makeTimestamp();
                         graphs.forEach(function(g){ g.show(); })
                         me.graphs = graphs;
                     })

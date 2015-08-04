@@ -56,7 +56,6 @@ define(function(require) {
                     data.splice(0, 1);
                 data.length = urlParams.size;
 
-                console.log(req, data);
                 callback(null, data.map(function(arr) {
                     return { x: arr[1] * 1000, y: arr[0] };
                 }));

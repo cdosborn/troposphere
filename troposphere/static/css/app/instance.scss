@@ -29,43 +29,60 @@
 }
 
 #container.metrics {
-    $soft_black: #777;
     margin: auto;
     width: 650px;
-    min-height: 600px;
     text-align: right;
 
+    // Colors 
+    $soft_black: #777;
+    $softer_black: #aaa;
+
+    $refresh_green: $brand-primary;
+    $refresh_hover_green: $brand-primary;
+
+    $margin_below: 15px;
+
+    // This height ensures that when the graph hides dom elements
+    // no scroll occurs, 
+    $graph_height: 350px;
+
+    #updateTimestamp text {
+        fill: $softer_black;
+    }
+
     #controls-container {
-        margin-bottom: 30px;
+        margin-bottom: $margin_below;
         color: $soft_black;
 
         #controls {
             margin-bottom: 0px;
             display: inline-block;
 
-            #refresh.disabled {
-                // color: $brand-primary;
-            }
             #refresh:not(.disabled) {
-                color: $brand-primary;
+                color: $refresh_green;
             }
             #refresh:hover:not(.disabled) {
-                color: #376a15;
+                color: $refresh_hover_green;
                 cursor: pointer;
             }
         }
     }
     #graph {
         text-align: center;
-        min-height: 100px;
+        min-height: $graph_height;
+    }
+
+    #labeledXAxis {
+        margin-bottom: $margin_below;
     }
 
     .loading {
         margin: 0 auto;
+        top: $graph_height / 4; 
     }
 
     .x.line {
-      stroke: $soft_black;
+      stroke: $softer_black;
     }
 
     .y.axis, .x.axis {
@@ -73,13 +90,13 @@
       font: 14px/1.4 Helvetica,arial,nimbussansl,liberationsans,freesans,clean,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";            
     }
     svg {
-        margin-bottom: 30px;
+        margin-bottom: $margin_below;
     }
 
     .axis path,
     .axis line {
         fill: none;
-        stroke: #808080;
+        stroke: $softer_black;
     }
     .line {
       fill: none;
@@ -99,7 +116,7 @@
       stroke:darkblue;
     }
     .mean.line {
-      stroke: #E9E9E9;
+      stroke: $softer_black;
     }
 }
 
