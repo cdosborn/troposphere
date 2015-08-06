@@ -35,7 +35,7 @@ define(function(require) {
     NetworkGraph.prototype = Object.create(Graph.prototype);
     NetworkGraph.prototype.constructor = NetworkGraph;
 
-    NetworkGraph.prototype.fetch = function(cb) {
+    NetworkGraph.prototype.fetch = function(onSuccess, onError) {
         var me = this;
         var series = [ this.upper, this.lower ];
 
@@ -52,13 +52,13 @@ define(function(require) {
                 s.urlParams.fun = "";
         });
 
-        Utils.fetch(me.uuid, series[0].urlParams, function(err, data) {
-          series[0].data = data;
-          Utils.fetch(me.uuid, series[1].urlParams, function(err, data) {
-            series[1].data = data;
-            cb.call(me);
-          }) 
-        }) 
+        Utils.fetch(me.uuid, series[0].urlParams, function(data) { 
+            series[0].data = data;
+            Utils.fetch(me.uuid, series[1].urlParams, function(data) {
+                series[1].data = data;
+                onSuccess.call(me);
+            }, onError) 
+        }, onError) 
     }
 
     NetworkGraph.prototype.make = function() {

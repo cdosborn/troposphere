@@ -45,12 +45,12 @@ define(function(require) {
 
     Graph.prototype = {};
 
-    Graph.prototype.create = function(cb) {
+    Graph.prototype.create = function(onSuccess, onError) {
         var me = this;
         this.fetch(function(){ 
             me.make()
-            cb && cb();
-        });
+            onSuccess && onSuccess();
+        }, onError);
     }
     Graph.prototype.hide = function() {
         this.element.style.display = "none";
@@ -64,7 +64,7 @@ define(function(require) {
             g.removeChild(g.lastChild);
         } 
     }
-    Graph.prototype.fetch = function(cb) {
+    Graph.prototype.fetch = function(onSuccess, onError) {
         var me = this;
         var urlParams =  {
             field: this.type,
@@ -76,10 +76,10 @@ define(function(require) {
             urlParams.fun = "perSecond";
         }
 
-        Utils.fetch(this.uuid, urlParams, function(err, data) {
+        Utils.fetch(this.uuid, urlParams, function(data) {
             me.data = data;
-            cb();
-        });
+            onSuccess();
+        }, onError);
     }
 
     Graph.prototype.make = function() {

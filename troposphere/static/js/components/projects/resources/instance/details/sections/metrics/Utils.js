@@ -29,7 +29,7 @@ define(function(require) {
     //       });
     // }
 
-    var fetch = function(uuid, urlParams, callback) {
+    var fetch = function(uuid, urlParams, onSuccess, onError) {
         var api = API_V2_ROOT + "/metrics";
 
         // Request extra datapoints to account for occasional null data at
@@ -48,7 +48,7 @@ define(function(require) {
             .header("Authorization", "Token " + access_token)
             .get(function(error, json) {
 
-                if (!json) return callback(new Error("unable to load data"));
+                if (!json) return onError && onError();
                 var data = json[0].datapoints
 
                 // Trim initial/final null values
@@ -56,7 +56,7 @@ define(function(require) {
                     data.splice(0, 1);
                 data.length = urlParams.size;
 
-                callback(null, data.map(function(arr) {
+                onSuccess(data.map(function(arr) {
                     return { x: arr[1] * 1000, y: arr[0] };
                 }));
 

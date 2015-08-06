@@ -15,53 +15,67 @@ define(function(require) {
                 uuid: this.props.instance.get("uuid"),
                 timeframe: "1 hour",
                 timestamp: new Date(),
+                
+                // Determine if service is available
+                //   null: service has no status (loading)
+                //   false: metrics api failed
+                //   true: metrics api success
+                available: null,
+
+                // Restrict refreshing
                 canRefresh: false,
                 
-                // Restrict refreshing 4000ms
-                refreshDelay: 4 * 1000,
+                // Set refresh interval to 1 minute
+                refreshDelay: 60 * 1000,
             };
+        }, 
+        onSuccess: function() {
+            // Called after successfully fetching data
+            this.setState({ 
+                available: true,
+                timestamp: new Date(),
+            });
         },
 
-      componentDidMount: function() {
-          var me = this;
+        onError: function() {
+            // Called after failing to fetch data
+            //throw new Error("metrics could not be fetched");
+            this.setState({ available: false });
+        },
+        componentDidMount: function() {
+            var me = this;
 
-          // Kickstart graphs since d3 needs a finished dom
-          me.setState({ 
-              graph: new GraphController({ 
-                  container: document.querySelector("#graphs"),
-              }), 
-          }, me.refresh)
-      },
+            // Kickstart graphs since d3 needs a finished dom
+            me.setState({ 
+                graph: new GraphController({ 
+                    container: document.querySelector("#graphs"),
+                }), 
+            }, me.refresh)
+        },
 
-      updateTimestamp: function() {
-          this.setState({
-              timestamp: new Date(),
-          })
-      },
+        refresh: function() {
+            var me = this;
 
-      refresh: function() {
-          var me = this;
+            // Disable refresh button
+            me.setState({
+                canRefresh: false,
+            }, function() {
 
-          // Disable refresh button
-          me.setState({
-              canRefresh: false,
-          }, function() {
+                this.state.graph.switch({ 
+                    uuid: this.state.uuid, 
+                    timeframe: this.state.timeframe,
+                    refresh: true,
+                }, this.onSuccess, this.onError);
 
-              this.state.graph.switch({ 
-                  uuid: this.state.uuid, 
-                  timeframe: this.state.timeframe,
-                  refresh: true,
-              }, me.updateTimestamp.bind(me));
+                // Enable refresh in a minute
+                setTimeout(function(){
+                    me.setState({
+                        canRefresh: true,
+                    }); 
+                }, me.state.refreshDelay); 
 
-              // Enable refresh in a minute
-              setTimeout(function(){
-                  me.setState({
-                      canRefresh: true,
-                  }); 
-              }, me.state.refreshDelay); 
-
-          })
-      },
+            })
+        },
 
       onTimeFrameClick : function(e) {
           this.setState({ 
@@ -70,7 +84,7 @@ define(function(require) {
               this.state.graph.switch({ 
                   uuid: this.state.uuid, 
                   timeframe: this.state.timeframe
-              }, this.updateTimestamp.bind(this));
+              }, this.onSuccess, this.onError);
           });
       },
 
@@ -100,24 +114,35 @@ define(function(require) {
              return selectableElement
          });
 
-         return (
-           <div className="metrics">
-               <div id="controls">
-                   <div className="metrics breadcrumb"> { breadcrumbs } </div>
-                   <span 
-                       id="refresh" 
-                       className={ "glyphicon glyphicon-refresh" + (!this.state.canRefresh ? " disabled" : "") }
-                       onClick={ this.onRefreshClick }
-                   >
-                   </span>
-                   <Timestamp from={ this.state.timestamp }/> 
-               </div>
-               <div id="container" className="metrics">
-                   <div className="loading"></div>
-                   <div id="graphs"></div>
-               </div>
-           </div>
-        )
+         var controlsClass = "glyphicon glyphicon-refresh";
+         if (!this.state.canRefresh) {
+             controlsClass += " disabled";
+         }
+         var controls =
+             <div id="controls"> 
+                <div className="metrics breadcrumb">{ breadcrumbs }</div>
+                <span 
+                    id="refresh" 
+                    className={ controlsClass }
+                    onClick={ this.onRefreshClick } >
+                </span>
+                <Timestamp from={ this.state.timestamp }/> 
+            </div>
+
+         if (this.state.available || 
+             this.state.available === null) {
+             return ( 
+                 <div className="metrics"> 
+                    { this.state.available !== null ? controls : "" }
+                    <div id="container" className="metrics">
+                       <div className="loading"></div>
+                       <div id="graphs"></div>
+                    </div>
+                </div>
+            )
+         } 
+
+         return (<div id="not-available">Instance metrics not available</div>)
        }
                     
     });

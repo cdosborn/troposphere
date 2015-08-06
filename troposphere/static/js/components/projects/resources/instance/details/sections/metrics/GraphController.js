@@ -12,7 +12,7 @@ define(function(require) {
         this.graphs = [];
     }
 
-    GraphController.prototype.switch = function(settings, cb) {
+    GraphController.prototype.switch = function(settings, onSuccess, onError) {
         var me = this;
 
         // Forcing a refresh is equivalent to emptying the store so that data
@@ -61,17 +61,18 @@ define(function(require) {
                         // Hide spinning loader
                         document.querySelector("#container.metrics .loading").style.display = "none";
                         graphs[2].makeAxis();
-                        // graphs[2].makeTimestamp();
                         graphs.forEach(function(g){ g.show(); })
                         me.graphs = graphs;
-                    })
-                })
-            })
+                        onSuccess && onSuccess();
+                    }, onError)
+                }, onError)
+            }, onError)
 
         } else {
             me.graphs.forEach(function(g){ g.hide(); })
             graphs.forEach(function(g){ g.show(); })
             me.graphs = graphs;
+            onSuccess && onSuccess();
         }
     }
 

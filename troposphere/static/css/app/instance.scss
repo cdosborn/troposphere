@@ -34,7 +34,7 @@
     $softer_black: #aaa;
     $softest_black: #ddd;
     $refresh_green: $brand-primary;
-    $refresh_hover_green: $brand-primary;
+    $refresh_hover_green: darken($brand-primary, 6.5%);
 
 
     // This height ensures that when the graph hides dom elements
@@ -74,6 +74,10 @@
             display: inline-block;
             padding: 5px;
         }
+    }
+
+    #not-available {
+        text-align: center
     }
     #graphs {
         text-align: center;
