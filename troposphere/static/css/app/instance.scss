@@ -29,45 +29,53 @@
 }
 
 #container.metrics {
-    margin: auto;
-    width: 650px;
-    text-align: right;
-
     // Colors 
     $soft_black: #777;
     $softer_black: #aaa;
-
+    $softest_black: #ddd;
     $refresh_green: $brand-primary;
     $refresh_hover_green: $brand-primary;
 
-    $margin_below: 15px;
 
     // This height ensures that when the graph hides dom elements
     // no scroll occurs, 
-    $graph_height: 350px;
+    $graph_height: 400px;
 
-    #updateTimestamp text {
-        fill: $softer_black;
-    }
+    // Default margin on elements
+    $margin_below: 15px;
 
-    #controls-container {
-        margin-bottom: $margin_below;
+    margin: auto;
+    margin-bottom: $margin_below;
+    width: 650px;
+    text-align: right;
+
+    #controls {
+        margin-bottom: $margin_below + 5px;
         color: $soft_black;
+        display: inline-block;
 
-        #controls {
-            margin-bottom: 0px;
+        .breadcrumb {
+            margin: 0px;
+        }
+        #refresh {
+            color: $softest_black;
+            top: 3px;
+        }
+        #refresh:not(.disabled) {
+            color: $refresh_green;
+        }
+        #refresh:hover:not(.disabled) {
+            color: $refresh_hover_green;
+            cursor: pointer;
+        }
+
+        #timestamp {
+            color: $softer_black;
             display: inline-block;
-
-            #refresh:not(.disabled) {
-                color: $refresh_green;
-            }
-            #refresh:hover:not(.disabled) {
-                color: $refresh_hover_green;
-                cursor: pointer;
-            }
+            padding: 5px;
         }
     }
-    #graph {
+    #graphs {
         text-align: center;
         min-height: $graph_height;
     }

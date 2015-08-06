@@ -30,14 +30,14 @@ define(function(require) {
         // Fetch data/build graphs for a timeframe
         if (graphs == undefined) {
 
-            this.timestamp = new Date();
+            // this.timestamp = new Date();
 
             var graphs = [["cpu", CPUGraph], ["mem", MemoryGraph], ["net", NetworkGraph]];
             graphs = graphs.map(function(data) {
                 return new data[1]({ 
                     type: data[0], 
                     uuid: settings.uuid,
-                    timestamp: me.timestamp,
+                    // timestamp: me.timestamp,
                     container: me.container,
                     timeframe: settings.timeframe
                 })
@@ -49,16 +49,19 @@ define(function(require) {
             me.graphs.forEach(function(g){ g.hide(); })
              
             // Show spinning loader
-            document.querySelector(".metrics > .loading").style.display = "inherit";
+            document.querySelector("#container.metrics .loading").style.display = "inherit";
+
+            // Exit here to debug css spinning loader
+            // return;
 
             graphs[0].create(function(){
                 graphs[1].create(function() {
                     graphs[2].create(function() {
 
                         // Hide spinning loader
-                        document.querySelector(".metrics > .loading").style.display = "none";
+                        document.querySelector("#container.metrics .loading").style.display = "none";
                         graphs[2].makeAxis();
-                        graphs[2].makeTimestamp();
+                        // graphs[2].makeTimestamp();
                         graphs.forEach(function(g){ g.show(); })
                         me.graphs = graphs;
                     })
@@ -70,8 +73,6 @@ define(function(require) {
             graphs.forEach(function(g){ g.show(); })
             me.graphs = graphs;
         }
-
-
     }
 
     return GraphController;
