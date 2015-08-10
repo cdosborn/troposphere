@@ -3,6 +3,9 @@
 // todo: make this inherit from a resource version so we can reuse for volumes
 //
 
+// Styling for instance metrics component
+//@import "instance_metrics";
+
 .instance-status-light {
   width: 12px;
   height: 12px;
@@ -28,108 +31,6 @@
   margin-top: 20px;
 }
 
-#InstanceMetrics {
-    // Colors 
-    $soft_black: #777;
-    $softer_black: #aaa;
-    $softest_black: #ddd;
-    $refresh_green: $brand-primary;
-    $refresh_hover_green: darken($brand-primary, 6.5%);
-
-
-    // This height ensures that when the graph hides dom elements
-    // no scroll occurs, 
-    $graph_height: 400px;
-
-    // Default margin on elements
-    $margin_below: 15px;
-
-    margin: auto;
-    margin-bottom: $margin_below;
-    width: 600px;
-    text-align: center;
-
-    #controls {
-        text-align: right;
-        margin-bottom: $margin_below + 5px;
-        color: $soft_black;
-
-        .breadcrumb {
-            margin: 0px;
-            display: inline-block;
-        }
-        #refresh {
-            color: $softest_black;
-            top: 3px;
-        }
-        #refresh:not(.disabled) {
-            color: $refresh_green;
-        }
-        #refresh:hover:not(.disabled) {
-            color: $refresh_hover_green;
-            cursor: pointer;
-        }
-
-        #timestamp {
-            color: $softer_black;
-            display: inline-block;
-            padding: 5px;
-        }
-    }
-
-    #not-available {
-        text-align: center
-    }
-    #graphs {
-        text-align: center;
-        min-height: $graph_height;
-    }
-
-    #labeledXAxis {
-        margin-bottom: $margin_below;
-    }
-
-    .loading {
-        margin: 0 auto;
-        top: $graph_height / 4; 
-    }
-
-    .x.line {
-      stroke: $softer_black;
-    }
-
-    .y.axis, .x.axis {
-      fill: $soft_black;
-      font: 14px/1.4 Helvetica,arial,nimbussansl,liberationsans,freesans,clean,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";            
-    }
-    svg {
-        margin-bottom: $margin_below;
-    }
-
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: $softer_black;
-    }
-    .line {
-      fill: none;
-      stroke: steelblue;
-      stroke-width: 2px;
-    }
-    .rx.area {
-        fill: #FADEE3;
-    }
-    .rx.line {
-      stroke:brown;
-    }
-    .tx.area {
-      fill: #E9F0FC;
-    }
-    .tx.line {
-      stroke:darkblue;
-    }
-    .mean.line {
-      stroke: $softer_black;
-    }
+.image-request-summary .form-group {
+  margin-bottom: 0px;
 }
-
