@@ -8,6 +8,7 @@ define(function(require) {
 
     var GraphController = function(config) {
         this.container = config.container;
+        this.width = config.width;
         this.store = new Store();
         this.graphs = [];
     }
@@ -39,6 +40,7 @@ define(function(require) {
                     uuid: settings.uuid,
                     // timestamp: me.timestamp,
                     container: me.container,
+                    width: me.width,
                     timeframe: settings.timeframe
                 })
             });

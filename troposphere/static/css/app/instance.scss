@@ -28,7 +28,7 @@
   margin-top: 20px;
 }
 
-#container.metrics {
+#InstanceMetrics {
     // Colors 
     $soft_black: #777;
     $softer_black: #aaa;
@@ -46,16 +46,17 @@
 
     margin: auto;
     margin-bottom: $margin_below;
-    width: 650px;
-    text-align: right;
+    width: 600px;
+    text-align: center;
 
     #controls {
+        text-align: right;
         margin-bottom: $margin_below + 5px;
         color: $soft_black;
-        display: inline-block;
 
         .breadcrumb {
             margin: 0px;
+            display: inline-block;
         }
         #refresh {
             color: $softest_black;

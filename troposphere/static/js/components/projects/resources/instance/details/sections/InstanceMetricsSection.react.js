@@ -2,7 +2,7 @@
 
 define(function(require) {
     var React = require('react'),
-        Controller = require('./metrics/Controller.react');
+        InstanceMetrics = require('./metrics/InstanceMetrics.react');
 
     return React.createClass({ 
       render: function() {
@@ -13,7 +13,9 @@ define(function(require) {
                         <h4 className="title">Instance Metrics</h4>
                     </div>
                     <div id="container" className="metrics"> 
-                        <Controller instance={ this.props.instance }/>
+                        <InstanceMetrics 
+                            instance={ this.props.instance } 
+                        />
                     </div> 
                 </div>
         )

@@ -56,6 +56,7 @@ define(function(require) {
             series[0].data = data;
             Utils.fetch(me.uuid, series[1].urlParams, function(data) {
                 series[1].data = data;
+                me.timestamp = Date.now();
                 onSuccess.call(me);
             }, onError) 
         }, onError) 
@@ -68,10 +69,8 @@ define(function(require) {
           var rxData = me.upper.data;
           var txData = me.lower.data;
 
-          var timestamp = this.timestamp;
-
           var metricsAxisHeight = 20,
-              yAxisWidth = 50,
+              yAxisWidth = 60,
               margin = {top: 10, right: 20, bottom: 5, left: yAxisWidth},
               width = this.width - margin.left - margin.right,
               height = this.height - margin.top - margin.bottom;
@@ -209,14 +208,6 @@ define(function(require) {
             .attr("y", height)
             .attr("dy", ".32em")
             .text("data out")
-
-          svg.append("text")
-            .attr("class", "metrics x axis")
-            .attr("style", "text-anchor:end")
-            .attr("x", width)
-            .attr("y", height + 60)
-            .attr("dy", ".32em")
-            .text("Updated: " + this.timestamp)
     }
 
     return NetworkGraph;

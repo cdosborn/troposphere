@@ -3,7 +3,8 @@
 define(function(require) {
     var React = require('react'),
         GraphController = require('./GraphController'),
-        Timestamp = require('./Timestamp.react');
+        TimeframeBreadcrumb = require('./TimeframeBreadcrumb.react'),
+        RefreshComponent = require('./RefreshComponent.react');
 
     return React.createClass({ 
 
@@ -11,10 +12,13 @@ define(function(require) {
             var me = this;
 
             return { 
-                graph: null, 
+                controller: null, 
                 uuid: this.props.instance.get("uuid"),
                 timeframe: "1 hour",
                 timestamp: new Date(),
+
+                // Individual graph widths
+                graphWidth: 550,  
                 
                 // Determine if service is available
                 //   null: service has no status (loading)
@@ -30,10 +34,17 @@ define(function(require) {
             };
         }, 
         onSuccess: function() {
+
+            // Conviluted way to fetch timestamp from store, off first graph
+            var timestamp = this.state.controller.store.get({
+                uuid: this.state.uuid, 
+                timeframe: this.state.timeframe
+            })[0].timestamp;
+
             // Called after successfully fetching data
             this.setState({ 
                 available: true,
-                timestamp: new Date(),
+                timestamp: timestamp,
             });
         },
 
@@ -43,14 +54,13 @@ define(function(require) {
             this.setState({ available: false });
         },
         componentDidMount: function() {
-            var me = this;
-
             // Kickstart graphs since d3 needs a finished dom
-            me.setState({ 
-                graph: new GraphController({ 
+            this.setState({ 
+                controller: new GraphController({ 
                     container: document.querySelector("#graphs"),
+                    width: this.state.graphWidth,
                 }), 
-            }, me.refresh)
+            }, this.refresh)
         },
 
         refresh: function() {
@@ -60,20 +70,11 @@ define(function(require) {
             me.setState({
                 canRefresh: false,
             }, function() {
-
-                this.state.graph.switch({ 
+                this.state.controller.switch({ 
                     uuid: this.state.uuid, 
                     timeframe: this.state.timeframe,
                     refresh: true,
                 }, this.onSuccess, this.onError);
-
-                // Enable refresh in a minute
-                setTimeout(function(){
-                    me.setState({
-                        canRefresh: true,
-                    }); 
-                }, me.state.refreshDelay); 
-
             })
         },
 
@@ -81,7 +82,7 @@ define(function(require) {
           this.setState({ 
               timeframe: e.target.innerHTML 
           }, function(){
-              this.state.graph.switch({ 
+              this.state.controller.switch({ 
                   uuid: this.state.uuid, 
                   timeframe: this.state.timeframe
               }, this.onSuccess, this.onError);
@@ -94,46 +95,26 @@ define(function(require) {
       },
        
       render: function() {
-         var me = this;
+         // available is true or still waiting for network request
+         if (this.state.available || this.state.available === null) {
 
-         var breadcrumbs = ["1 hour", "1 day", "1 week"].map(function(content) {
-             var selectableElement = React.DOM.li({}, React.DOM.a({
-                 href: "javascript:void(0);",
-                 onClick: me.onTimeFrameClick,
-                 ref: "selectedAnchorContent"
-             }, content));
-
-             var selectedElement = React.DOM.li({
-                 id: content,
-                 className: "active metrics"
-             }, content)
-
-             if (content == me.state.timeframe) {
-                 return selectedElement
-             }
-             return selectableElement
-         });
-
-         var controlsClass = "glyphicon glyphicon-refresh";
-         if (!this.state.canRefresh) {
-             controlsClass += " disabled";
-         }
-         var controls =
-             <div id="controls"> 
-                <div className="metrics breadcrumb">{ breadcrumbs }</div>
-                <span 
-                    id="refresh" 
-                    className={ controlsClass }
-                    onClick={ this.onRefreshClick } >
-                </span>
-                <Timestamp from={ this.state.timestamp }/> 
-            </div>
-
-         if (this.state.available || 
-             this.state.available === null) {
              return ( 
-                 <div className="metrics"> 
-                    { this.state.available !== null ? controls : "" }
+                 <div id="InstanceMetrics"> 
+                     <div 
+                        id="controls" 
+                        style={{ 
+                            display : this.state.available ? "inherit" : "none"
+                        }}>
+                        <TimeframeBreadcrumb
+                           timeframe={ this.state.timeframe }
+                           onTimeFrameClick={ this.onTimeFrameClick }
+                        />
+                        <RefreshComponent 
+                            delay={ this.state.refreshDelay }
+                            timestamp={ this.state.timestamp }
+                            onRefreshClick={ this.refresh }
+                        />
+                    </div>
                     <div id="container" className="metrics">
                        <div className="loading"></div>
                        <div id="graphs"></div>
@@ -142,6 +123,7 @@ define(function(require) {
             )
          } 
 
+         // available is explicitly false
          return (<div id="not-available">Instance metrics not available</div>)
        }
                     

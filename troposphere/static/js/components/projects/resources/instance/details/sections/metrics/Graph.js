@@ -25,17 +25,15 @@ define(function(require) {
         }
 
         var defaults = {
-            width: 610,
+            width: 600,
             height: 100
         }
 
+        for (prop in defaults) {
+            this[prop] = defaults[prop];
+        }
         for (prop in config) {
             this[prop] = config[prop];
-        }
-        for (prop in defaults) {
-            if (config[prop] == undefined) {
-                this[prop] = defaults[prop];
-            }
         }
 
         this.element = document.createElement("div");
@@ -77,116 +75,117 @@ define(function(require) {
         }
 
         Utils.fetch(this.uuid, urlParams, function(data) {
+            me.timestamp = Date.now();
             me.data = data;
             onSuccess();
         }, onError);
     }
 
     Graph.prototype.make = function() {
-          var me = this;
-          var data = this.data
-          var graphDom = this.element;
-            
-          var yAxisWidth = 50,
-              margin = {top: 10, right: 20, bottom: 5, left: yAxisWidth},
-              width = this.width - margin.left - margin.right,
-              height = this.height - margin.top - margin.bottom;
+        var me = this;
+        var data = this.data
+            var graphDom = this.element;
 
-          getX = Utils.get("x"); 
-          getY = Utils.get("y"); 
+        var yAxisWidth = 60,
+            margin = {top: 10, right: 20, bottom: 5, left: yAxisWidth},
+            width = this.width - margin.left - margin.right,
+            height = this.height - margin.top - margin.bottom;
 
-          var yMax = d3.max(data, getY);
-          var yMean = d3.mean(data, getY) || 0;
-          var xMax = d3.max(data, getX);
-          var xMin = d3.min(data, getX);
+        getX = Utils.get("x"); 
+        getY = Utils.get("y"); 
 
-          var showRelative = false;
-          
-          var x = d3.scale.linear()
-              .range([0, width])
-              .domain(d3.extent(data, getX));
+        var yMax = d3.max(data, getY);
+        var yMean = d3.mean(data, getY) || 0;
+        var xMax = d3.max(data, getX);
+        var xMin = d3.min(data, getX);
 
-          var y = d3.scale.linear()
-              .range([height, 0])
-              .domain([0, (showRelative ? 1.2 * yMax : 1)]);
+        var showRelative = false;
 
-          var line = d3.svg.line()
-              //.interpolate("basis")
-              .x(function(d) { return x(d.x); })
-              .y(function(d) { return y(d.y); });
+        var x = d3.scale.linear()
+            .range([0, width])
+            .domain(d3.extent(data, getX));
 
-          var area = d3.svg.area()
-              //.interpolate("basis")
+        var y = d3.scale.linear()
+            .range([height, 0])
+            .domain([0, (showRelative ? 1.2 * yMax : 1)]);
+
+        var line = d3.svg.line()
+            //.interpolate("basis")
+            .x(function(d) { return x(d.x); })
+            .y(function(d) { return y(d.y); });
+
+        var area = d3.svg.area()
+            //.interpolate("basis")
             .x(function(d) { return x(d.x); })
             .y0(height)
             .y1(function(d) { return y(d.y); });
 
-          var svg = d3.select(graphDom).append("svg")
-                .attr("width", me.width)
-                .attr("height", me.height)
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var svg = d3.select(graphDom).append("svg")
+            .attr("width", me.width)
+            .attr("height", me.height)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-          var delta = 0.2;
-          var showMax = yMax > delta && 
-                        yMax < 1 - delta;
+        var delta = 0.2;
+        var showMax = yMax > delta && 
+            yMax < 1 - delta;
 
-          var showMean = 
-              // if mean-label enough below max label
-              yMean < yMax - delta * yMax &&
-              // if mean-label enough above 0
-              yMean > (showRelative ? delta * yMax : delta) 
+        var showMean = 
+            // if mean-label enough below max label
+            yMean < yMax - delta * yMax &&
+            // if mean-label enough above 0
+            yMean > (showRelative ? delta * yMax : delta) 
 
-          if (showMean) {
-              svg.append("path")
-                  .datum([
-                          { x: xMin, y: yMean },
-                          { x: xMax, y: yMean }
-                          ])
-                  .style("stroke-dasharray", ("3, 3"))
-                  .attr("class", "metrics mean line")
-                  .attr("d", line)
-          }
+            if (showMean) {
+                svg.append("path")
+                    .datum([
+                            { x: xMin, y: yMean },
+                            { x: xMax, y: yMean }
+                            ])
+                    .style("stroke-dasharray", ("3, 3"))
+                    .attr("class", "metrics mean line")
+                    .attr("d", line)
+            }
 
-          svg.append("path")
+        svg.append("path")
             .datum(data)
             .attr("class", "metrics rx area")
             .attr("d", area)
 
-          var xAxis = d3.svg.line()
-              .x(function(d) { return x(d.x); })
-              .y(function(d) { return y(0); });
+            var xAxis = d3.svg.line()
+            .x(function(d) { return x(d.x); })
+            .y(function(d) { return y(0); });
 
-          svg.append("path")
-              .datum(data)
-              .attr("class", "metrics x line")
-              .attr("d", xAxis)
+        svg.append("path")
+            .datum(data)
+            .attr("class", "metrics x line")
+            .attr("d", xAxis)
 
-          svg.append("path")
+            svg.append("path")
             .datum(data)
             .attr("class", "metrics rx line")
             .attr("d", line)
 
-          // Determine what ticks to display on y axis
-          var ticks = [0];
-          if (showMean) ticks.push(yMean);
-          if (showMax) ticks.push(yMax);
-          if (showRelative)
-              ticks.push(yMax);
-          else 
-              ticks.push(1);
+            // Determine what ticks to display on y axis
+            var ticks = [0];
+        if (showMean) ticks.push(yMean);
+        if (showMax) ticks.push(yMax);
+        if (showRelative)
+            ticks.push(yMax);
+        else 
+            ticks.push(1);
 
-          var yAxis = d3.svg.axis()
-              .tickFormat(d3.format(showRelative ? ".1%" : ".0%"))
-              .tickValues(ticks)
-              .scale(y)
-              .orient("left");
+        var yAxis = d3.svg.axis()
+            .tickFormat(d3.format(showRelative ? ".1%" : ".0%"))
+            .tickValues(ticks)
+            .scale(y)
+            .orient("left");
 
-          svg.append("g")
+        svg.append("g")
             .attr("class", "metrics y axis")
             .call(yAxis)
 
-          svg.append("text")
+            svg.append("text")
             .attr("class", "metrics x axis")
             .attr("style", "text-anchor:end")
             .attr("x", width)
@@ -207,7 +206,7 @@ define(function(require) {
         var metricsAxisHeight = 30;
 
         // Define container margins
-        var yAxisWidth = 50,
+        var yAxisWidth = 60,
             margin = {top: 5, right: 20, bottom: 5, left: yAxisWidth};
 
         // Width/height of axis

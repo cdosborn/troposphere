@@ -18,7 +18,7 @@ define(function(require) {
             delete data[JSON.stringify(key)];
         }
         this.removeAll = function(key) {
-            data = []; 
+            data = {}; 
         }
 
     }
