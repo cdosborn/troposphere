@@ -1,13 +1,13 @@
 define(function (require) {
 
   var React = require('react'),
-      Backbone = require('backbone'),
-      BreadcrumbBar = require('components/projects/common/BreadcrumbBar.react'),
-      InstanceInfoSection = require('./sections/InstanceInfoSection.react'),
-      InstanceDetailsSection = require('./sections/InstanceDetailsSection.react'),
-      InstanceMetricsSection = require('./sections/InstanceMetricsSection.react'),
-      InstanceActionsAndLinks = require('./actions/InstanceActionsAndLinks.react'),
-      stores = require('stores');
+    Backbone = require('backbone'),
+    BreadcrumbBar = require('components/projects/common/BreadcrumbBar.react'),
+    InstanceInfoSection = require('./sections/InstanceInfoSection.react'),
+    InstanceDetailsSection = require('./sections/InstanceDetailsSection.react'),
+    InstanceMetricsSection = require('./sections/InstanceMetricsSection.react'),
+    InstanceActionsAndLinks = require('./actions/InstanceActionsAndLinks.react'),
+    stores = require('stores');
 
   return React.createClass({
 
@@ -18,7 +18,7 @@ define(function (require) {
 
     render: function () {
       var instance = this.props.instance,
-          project = this.props.project;
+        project = this.props.project;
 
       if (!instance || !project) return <div className="loading"></div>;
 
@@ -38,6 +38,7 @@ define(function (require) {
       return (
         <div>
           <BreadcrumbBar breadcrumbs={breadcrumbs}/>
+
           <div className="row resource-details-content">
             <div className="col-md-9">
               <InstanceInfoSection instance={instance}/>
@@ -53,7 +54,7 @@ define(function (require) {
               <InstanceActionsAndLinks
                 project={project}
                 instance={instance}
-              />
+                />
             </div>
           </div>
         </div>
