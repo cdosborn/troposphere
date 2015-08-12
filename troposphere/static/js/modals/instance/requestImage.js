@@ -2,30 +2,34 @@ define(function (require) {
   "use strict";
 
   var ModalHelpers = require('components/modals/ModalHelpers'),
-      InstanceImageModal = require('components/modals/instance/InstanceImageModal.react'),
-      actions = require('actions');
+    InstanceImageWizardModal = require('components/modals/instance/InstanceImageWizardModal.react'),
+    actions = require('actions');
 
   return {
 
-    requestImage: function(params){
-      if(!params.instance) throw new Error("Missing instance");
+    requestImage: function (params) {
+      if (!params.instance) throw new Error("Missing instance");
 
       var instance = params.instance,
-          modal = InstanceImageModal({
-            instance: instance
-          });
+        props = {
+          instance: instance,
+          imageOwner: instance.get('image').user == instance.get('user').id
+          //NOTE:onConfirm set in function below, as part of ModalHelpers.renderModal
+        };
 
-      ModalHelpers.renderModal(modal, function (params) {
+      ModalHelpers.renderModal(InstanceImageWizardModal, props, function (params) {
         actions.InstanceActions.requestImage({
           instance: instance,
           name: params.name,
           description: params.description,
+          tags: params.tags,
+          fork: params.newImage,
           providerId: params.providerId,
-          software: params.software || "No software provided",
-          filesToExclude: params.filesToExclude || "No files to exclude",
-          systemFiles: params.systemFiles || "No system files provided",
           visibility: params.visibility,
-          tags: params.tags
+          imageUsers: params.imageUsers,
+          filesToExclude: params.filesToExclude || "",
+          software: params.software || "",
+          systemFiles: params.systemFiles || ""
         });
       })
     }

@@ -9,6 +9,10 @@
     $softest_black: #ddd;
     $refresh_green: $brand-primary;
     $refresh_hover_green: darken($brand-primary, 6.5%);
+    $light_red: #FADEE3;
+    $dark_red: brown;
+    $light_blue: #E9F0FC;
+    $dark_blue: darkblue;
 
     // This height ensures that when the graph hides dom elements
     // no scroll occurs, 
@@ -71,7 +75,7 @@
       stroke: $softer_black;
     }
 
-    .y.axis, .x.axis {
+    text {
       fill: $soft_black;
       font: 14px/1.4 Helvetica,arial,nimbussansl,liberationsans,freesans,clean,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";            
     }
@@ -91,16 +95,16 @@
       stroke-width: 2px;
     }
     .rx.area {
-        fill: #FADEE3;
+        fill: $light_red;
     }
     .rx.line {
-      stroke:brown;
+      stroke: $dark_red;
     }
     .tx.area {
-      fill: #E9F0FC;
+      fill: $light_blue;
     }
     .tx.line {
-      stroke:darkblue;
+      stroke: $dark_blue;
     }
     .mean.line {
       stroke: $softer_black;

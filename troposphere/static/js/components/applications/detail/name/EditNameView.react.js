@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 
 define(
   [
@@ -19,11 +18,12 @@ define(
 
       render: function () {
         var image = this.props.application,
-            name = this.props.value;
+          name = this.props.value;
 
         return (
           <div className="image-info-segment row">
             <h4 className="title col-md-2">Name</h4>
+
             <div className="content col-md-10">
               <input value={name} onChange={this.props.onChange}/>
             </div>

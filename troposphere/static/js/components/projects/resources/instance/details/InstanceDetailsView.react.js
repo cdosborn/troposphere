@@ -20,7 +20,7 @@ define(function (require) {
       var instance = this.props.instance,
           project = this.props.project;
 
-      if(!instance || !project) return <div className="loading"></div>;
+      if (!instance || !project) return <div className="loading"></div>;
 
       var breadcrumbs = [
         {

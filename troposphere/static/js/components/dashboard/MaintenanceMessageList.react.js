@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 
 define(
   [
@@ -16,13 +15,13 @@ define(
         applications: React.PropTypes.instanceOf(Backbone.Collection).isRequired
       },
 
-      renderApplicationNotification: function(application){
+      renderApplicationNotification: function (application) {
         return (
           <ImageCreatedMessage key={application.id} application={application}/>
         );
       },
 
-      renderMaintenanceNotification: function(message){
+      renderMaintenanceNotification: function (message) {
         return (
           <MaintenanceMessage key={message.id} message={message}/>
         );
@@ -31,7 +30,7 @@ define(
       render: function () {
         var notifications = [];
         var maintenanceNotifications = this.props.messages.map(this.renderMaintenanceNotification);
-        var applicationNotifications = this.props.applications.slice(0,11).map(this.renderApplicationNotification);
+        var applicationNotifications = this.props.applications.slice(0, 11).map(this.renderApplicationNotification);
         notifications = notifications.concat(maintenanceNotifications, applicationNotifications);
 
         if (notifications.length > 0) {
@@ -40,7 +39,7 @@ define(
               {notifications}
             </ul>
           );
-        }else{
+        } else {
           return (
             <ul className="notifications">
               <div className="preview-message">

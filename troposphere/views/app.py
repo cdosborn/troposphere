@@ -29,6 +29,13 @@ def _handle_public_application_request(request, maintenance_records, disabled_lo
         'show_troposphere_only': show_troposphere_only
     }
 
+    template_params['THEME_HEADER_TEXT'] = settings.THEME_HEADER_TEXT
+    template_params['THEME_FAVICON'] = settings.THEME_FAVICON
+    template_params['THEME_CSS_FILE'] = settings.THEME_CSS_FILE
+    template_params['THEME_LOGO'] = settings.THEME_LOGO
+    template_params['THEME_FOOTER_TEXT'] = settings.THEME_FOOTER_TEXT
+    template_params['UI_VERSION'] = settings.UI_VERSION
+
     if hasattr(settings, "API_ROOT"):
         template_params['API_ROOT'] = settings.API_ROOT
 
@@ -71,8 +78,15 @@ def _handle_authenticated_application_request(request, maintenance_records):
         'emulator_token': request.session.get('emulator_token'),
         'emulated_by': request.session.get('emulated_by'),
         'records': maintenance_records,
-        'show_troposphere_only': show_troposphere_only,
+        'show_troposphere_only': show_troposphere_only
     }
+
+    template_params['THEME_HEADER_TEXT'] = settings.THEME_HEADER_TEXT
+    template_params['THEME_FAVICON'] = settings.THEME_FAVICON
+    template_params['THEME_CSS_FILE'] = settings.THEME_CSS_FILE
+    template_params['THEME_LOGO'] = settings.THEME_LOGO
+    template_params['THEME_FOOTER_TEXT'] = settings.THEME_FOOTER_TEXT
+    template_params['UI_VERSION'] = settings.UI_VERSION
 
     if hasattr(settings, "INTERCOM_APP_ID"):
         template_params['intercom_app_id'] = settings.INTERCOM_APP_ID
@@ -107,7 +121,7 @@ def _handle_authenticated_application_request(request, maintenance_records):
     # Return the new Troposphere UI
     if user_preferences.show_beta_interface or show_troposphere_only:
         response = render_to_response(
-            'application.html',
+            'index.html',
             template_params,
             context_instance=RequestContext(request)
         )
