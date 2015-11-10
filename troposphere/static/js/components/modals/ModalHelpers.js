@@ -16,7 +16,6 @@ define(
       renderModal: function(ModalComponent, props, cb){
         props = _.extend(props || {}, {
           onConfirm: cb,
-          onCancel: onCancel,
           handleHidden: onCancel,
         });
 
