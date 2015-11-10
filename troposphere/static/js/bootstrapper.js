@@ -57,6 +57,7 @@ define(function (require) {
   stores.ProviderMachineStore = require('stores/ProviderMachineStore');
   stores.ProviderStore = require('stores/ProviderStore');
   stores.ResourceRequestStore = require('stores/ResourceRequestStore');
+  stores.IdentityMembershipStore = require('stores/IdentityMembershipStore');
   stores.StatusStore = require('stores/StatusStore');
   stores.SSHKeyStore = require('stores/SSHKeyStore');
   window.stores = stores;
@@ -68,8 +69,10 @@ define(function (require) {
   stores.VolumeStore = require('stores/VolumeStore');
 
   var actions = require('actions');
+  actions.AllocationActions = require('actions/AllocationActions');
   actions.BadgeActions = require('actions/BadgeActions');
   actions.HelpActions = require('actions/HelpActions');
+  actions.IdentityMembershipActions = require('actions/IdentityMembershipActions');
   actions.ImageActions = require('actions/ImageActions');
   actions.ImageVersionActions = require('actions/ImageVersionActions');
   actions.ImageVersionMembershipActions = require('actions/ImageVersionMembershipActions');
@@ -79,7 +82,6 @@ define(function (require) {
   actions.InstanceActions = require('actions/InstanceActions');
   actions.InstanceTagActions = require('actions/InstanceTagActions');
   actions.InstanceVolumeActions = require('actions/InstanceVolumeActions');
-  //actions.MembershipActions     = require('actions/MembershipActions');
   actions.LicenseActions = require('actions/LicenseActions');
   actions.ScriptActions = require('actions/ScriptActions');
   actions.NullProjectActions = require('actions/NullProjectActions');
@@ -104,13 +106,20 @@ define(function (require) {
 
   return {
     run: function () {
+      let authHeaders = {
+          "Content-Type": "application/json"
+      }
+
+      // Assure that an auth header is only included when we have
+      // an actually `access_token` to provide.
+      if (window.access_token) {
+        authHeaders["Authorization"] = "Token " + window.access_token;
+      }
+
 
       // Make sure the Authorization header is added to every AJAX request
       $.ajaxSetup({
-        headers: {
-          "Authorization": "Token " + window.access_token,
-          "Content-Type": "application/json"
-        }
+        headers: authHeaders
       });
 
       // We're wrapping Backbone.sync so that we can observe every AJAX request.

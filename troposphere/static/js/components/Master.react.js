@@ -17,6 +17,7 @@ define(function (require) {
   var Router = require('react-router'),
     RouteHandler = Router.RouteHandler;
   return React.createClass({
+    displayName: "Master",
 
     mixins: [Router.State],
 
@@ -36,8 +37,8 @@ define(function (require) {
           var instances = stores.InstanceStore.getInstancesNotInAProject(),
           volumes = stores.VolumeStore.getVolumesNotInAProject(),
           nullProject = new NullProject({instances: instances, volumes: volumes});
-          
-          //setTimout is a Hack. We need to let the first modal unmount before calling getDOMNode 
+
+          //setTimout is a Hack. We need to let the first modal unmount before calling getDOMNode
           //on the second modal, else we get an err "Invariant Violation: getDOMNode():".
           //See https://github.com/facebook/react/issues/2410 for other solutions
           setTimeout(function(){
@@ -64,11 +65,10 @@ define(function (require) {
 
       // The code below is only relevant to logged in users
       if (!context.profile) return;
-
       // IMPORTANT! We get one shot at this. If the instances and volumes aren't
       // fetched before this component is mounted we miss our opportunity to migrate
       // the users resources (so make sure they're fetched in the Splash Screen)
-    
+
 
         var instances = stores.InstanceStore.getInstancesNotInAProject(),
         volumes = stores.VolumeStore.getVolumesNotInAProject(),
@@ -106,6 +106,13 @@ define(function (require) {
     // --------------
 
     render: function () {
+
+      if (!context.profile.get('selected_identity') ) {
+          //Users who ARE logged in, but without an identity
+          //cannot be handled in the application, currently.
+          //These users are punted now.
+          window.location.pathname = "/forbidden";
+      }
 
       var maintenanceMessages = stores.MaintenanceMessageStore.getAll() || new Backbone.Collection(),
       marginTop = maintenanceMessages.length * 24 + "px";

@@ -88,6 +88,7 @@ define(function(require) {
                 <SizeSelectStep
                     image={this.state.image}
                     identity={this.state.identity}
+                    version={this.state.version}
                     size={this.state.size}
                     onRequestResources={this.onRequestResources}
                     onPrevious={this.onPrevious}
@@ -216,10 +217,10 @@ define(function(require) {
                 {this.renderCloseButton()}
                 <strong>Instance Launch Wizard- {this.state.title}</strong>
               </div>
-              <div className="modal-section">
-                {this.renderBreadCrumbTrail()}
-              </div>
               <div className="modal-body">
+                <div className="clearfix modal-section">
+                    {this.renderBreadCrumbTrail()}
+                </div>
                 {this.renderBody()}
               </div>
             </div>

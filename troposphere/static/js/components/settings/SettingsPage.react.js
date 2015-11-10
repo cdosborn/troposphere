@@ -19,6 +19,7 @@ define(
     }
 
     return React.createClass({
+      displayName: "SettingsPage",
 
       getInitialState: function () {
         return getState();

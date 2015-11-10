@@ -6,15 +6,17 @@ define(
     './launch/ImageLaunchCard.react',
     './name/NameView.react',
     './created/CreatedView.react',
+    './removed/RemovedView.react',
     './author/AuthorView.react',
     './description/DescriptionView.react',
     './versions/VersionsView.react',
     'actions',
     'stores'
   ],
-  function (React, HeaderView, TagsView, ImageLaunchCard, NameView, CreatedView, AuthorView, DescriptionView, VersionsView, actions, stores) {
+  function (React, HeaderView, TagsView, ImageLaunchCard, NameView, CreatedView, RemovedView, AuthorView, DescriptionView, VersionsView, actions, stores) {
 
     return React.createClass({
+      displayName: "ViewImageDetails",
 
       propTypes: {
         image: React.PropTypes.instanceOf(Backbone.Model).isRequired,
@@ -52,6 +54,7 @@ define(
             <div>
               <NameView image={this.props.image}/>
               <CreatedView image={this.props.image}/>
+              <RemovedView image={this.props.image}/>
               <AuthorView image={this.props.image}/>
               <DescriptionView image={this.props.image}/>
               {tagsView}

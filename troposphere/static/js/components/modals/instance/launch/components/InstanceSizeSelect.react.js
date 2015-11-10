@@ -7,6 +7,7 @@ define(
   function (React, Backbone) {
 
     return React.createClass({
+      displayName: "InstanceSizeSelect",
 
       propTypes: {
         sizeId: React.PropTypes.number.isRequired,
@@ -15,9 +16,14 @@ define(
       },
 
       renderOption: function (size) {
+        var disabled = this.props.min_cpu != null && this.props.min_mem != null && (size.get('cpu') < this.props.min_cpu || size.get('mem') < this.props.min_mem);
+        var text = size.formattedDetails();
+        if(disabled){
+          text += " Unavailable: fails minimum requirements";
+        }
         return (
-          <option key={size.id} value={size.id}>
-            {size.formattedDetails()}
+          <option disabled={disabled} key={size.id} value={size.id}>
+            {text}
           </option>
         );
       },
