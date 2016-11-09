@@ -109,12 +109,9 @@ export default React.createClass({
     },
 
     renderSummary() {
-        let styles = this.styles();
-        return (
-        <div style={ styles.content }>
-            { this.renderChangeLog() }
-        </div>
-       );
+        if (context.hasLoggedInUser()) {
+            return this.renderDetail();
+        }
     },
 
     renderDetail() {
