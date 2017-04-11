@@ -56,11 +56,16 @@ export default React.createClass({
         let toTagList = parent_image_tags.map(function (api_tag) {
             return new Tag(api_tag, {parse: true});
         });
-        let imageTags = new TagCollection(toTagList);
 
-        this.setState({
-            imageTags
-        });
+
+        let imageTagsState = this.state.imageTags;
+        if (!imageTagsState) {
+            let imageTags = new TagCollection(toTagList);
+
+            this.setState({
+                imageTags
+            });
+        }
     },
 
     isValidName: function(input) {

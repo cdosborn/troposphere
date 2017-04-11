@@ -91,7 +91,6 @@ export default React.createClass({
         let imageTags = this.props.imageTags;
         let tags = this.state.tags;
         let query = this.state.query;
-
         let filteredImageTags = imageTags.cfilter(this.allowAccessFilter);
         let filteredTags = tags.cfilter(this.allowAccessFilter);
 

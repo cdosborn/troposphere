@@ -16,7 +16,8 @@ export default {
 
         var tag = new Tag({
             name: name,
-            description: description
+            description: description,
+            allow_access: name !== "featured",
         });
 
         // Add the tag optimistically
