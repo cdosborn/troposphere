@@ -41,31 +41,19 @@ export default React.createClass({
             defaultDescription = instance.get("image").description;
         }
 
+        let imageTags = new TagCollection(instance.get("image").tags);
+
         return {
             name: defaultName,
             nameError: this.setNameError(defaultName),
             description: defaultDescription,
             newImage: true,
-            imageTags: null,
+            imageTags,
         }
     },
 
     updateState: function() {
-        let instance = this.props.instance;
-        let parent_image_tags = instance.get("image").tags;
-        let toTagList = parent_image_tags.map(function (api_tag) {
-            return new Tag(api_tag, {parse: true});
-        });
-
-
-        let imageTagsState = this.state.imageTags;
-        if (!imageTagsState) {
-            let imageTags = new TagCollection(toTagList);
-
-            this.setState({
-                imageTags
-            });
-        }
+        this.forceUpdate();
     },
 
     isValidName: function(input) {
