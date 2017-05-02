@@ -1,22 +1,27 @@
 sudo: required
 dist: trusty
-language: node_js
-node_js:
-  - "4.6"
-  - "4.4"
-python:
-  - "2.7"
+language: python
+python: "2.7"
 before_install:
-  - "python -V"
-  - "pip -V"
+# - sudo apt-get update
+- sudo apt-get install -y git python python-pip python-dev libffi-dev libssl-dev software-properties-common python-software-properties
+- sudo apt-get purge --auto-remove redis-server
+- sudo pg_dropcluster --stop 9.2 main
+- sudo pg_dropcluster --stop 9.3 main
+- sudo pg_dropcluster --stop 9.4 main
+- sudo pg_dropcluster --stop 9.5 main
+- git clone https://github.com/cyverse/clank.git /opt/dev/clank;
+- virtualenv /opt/env/clank
+- . /opt/env/clank/bin/activate
+- pip install -r /opt/dev/clank/requirements.txt
+
 install:
-  - "pip install -r requirements.txt"
-  - "pip install -r dev_requirements.txt"
-  - "npm install"
+    - /opt/env/clank/bin/python /opt/dev/clank/clank.py
+        --env_file /opt/dev/clank/dist_files/variables.yml.dist
+        --skip-tags "distro-update"
+        --tags "dependencies,troposphere"
+        --verbose
+        -b
+
 script:
-  - "cp variables.ini.dist variables.ini"
-  - "./configure --config-one theme:themeImagesPath.js"
-  - "./configure --config-one theme:theme.json"
-  - "./configure --config-one theme:variables.scss"
-  - "npm run build"
-  - "npm run travis-lint"
+- npm run travis-lint
