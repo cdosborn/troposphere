@@ -5,30 +5,52 @@ import AUCalculator from "components/common/AUCalculator";
 import stores from "stores";
 import globals from "globals";
 
+// We can partially apply this function with the provider
+// to use in our find methods below
+function matchProviderById(provider, item) {
+    return item => item.get("provider").id === provider.id
+}
+
 export default React.createClass({
     displayName: "RequestMoreResourcesModal",
 
     mixins: [BootstrapModalMixin],
 
     getInitialState: function() {
-        var identities = stores.IdentityStore.getAll();
+        const { provider } = this.props;
+        let identities = stores.IdentityStore.getAll();
+
+        let defaultIdentity;
+        if (identities) {
+            defaultIdentity = provider ?
+                identities.find(matchProviderById(provider)).id
+                : identities.first().id;
+        }
         return {
-            identity: identities ? identities.first().id : null,
+            identity: defaultIdentity,
             resources: "",
             reason: ""
         };
     },
 
     getState: function() {
-        var identities = stores.IdentityStore.getAll(),
-            identityId = null;
+        const { provider } = this.props;
+        const { identity: stateIdentity } = this.state;
+        let identities = stores.IdentityStore.getAll();
+        let identity = null;
 
+        let defaultIdentity;
         if (identities) {
-            identityId = this.state.identity ? this.state.identity : identities.first().id;
+            defaultIdentity = provider ?
+                identities.find(matchProviderById(provider)).id
+                : identities.first().id;
+
+            identity = stateIdentity ?
+                stateIdentity : defaultIdentity;
         }
 
         return {
-            identity: identityId
+            identity
         }
     },
 
@@ -148,7 +170,11 @@ export default React.createClass({
                 <label htmlFor="project-identity">
                     {"What cloud would you like resources for?"}
                 </label>
-                <select className="form-control" onChange={this.handleIdentityChange}>
+                <select
+                    value={ this.state.identity }
+                    className="form-control"
+                    onChange={this.handleIdentityChange}
+                >
                     {identities.map(this.renderIdentity)}
                 </select>
             </div>

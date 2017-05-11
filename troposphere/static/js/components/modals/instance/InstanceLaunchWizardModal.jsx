@@ -380,7 +380,9 @@ export default React.createClass({
 
     onRequestResources: function() {
         this.hide();
-        modals.HelpModals.requestMoreResources(this);
+        modals.HelpModals.requestMoreResources({
+            provider: this.state.provider
+        });
     },
 
     onAddAttachedScript: function(value) {
