@@ -2,7 +2,7 @@ import React from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import BootstrapModalMixin from "components/mixins/BootstrapModalMixin";
 import AUCalculator from "components/common/AUCalculator";
-import stores from "stores";
+import subscribe from "utilities/subscribe";
 import globals from "globals";
 
 // We can partially apply this function with the provider
@@ -11,43 +11,46 @@ function matchProviderById(provider, item) {
     return item => item.get("provider").id === provider.id
 }
 
-export default React.createClass({
+function defaultIdentity(provider, identities) {
+    let defaultIdentity = null;
+    if (identities) {
+        defaultIdentity = provider ?
+            identities.find(matchProviderById(provider)).id
+            : identities.first().id;
+    }
+
+    return defaultIdentity
+};
+
+const RequestMoreResourcesModal = React.createClass({
     displayName: "RequestMoreResourcesModal",
 
     mixins: [BootstrapModalMixin],
 
     getInitialState: function() {
-        const { provider } = this.props;
-        let identities = stores.IdentityStore.getAll();
+        const { provider, subscriptions: { IdentityStore }} = this.props;
+        let identities = IdentityStore.getAll();
 
-        let defaultIdentity;
-        if (identities) {
-            defaultIdentity = provider ?
-                identities.find(matchProviderById(provider)).id
-                : identities.first().id;
-        }
         return {
-            identity: defaultIdentity,
+            identity: defaultIdentity(provider, identities),
             resources: "",
             reason: ""
         };
     },
 
     getState: function() {
-        const { provider } = this.props;
         const { identity: stateIdentity } = this.state;
-        let identities = stores.IdentityStore.getAll();
-        let identity = null;
+        const { 
+            provider, 
+            subscriptions: {
+                IdentityStore,
+            }
+        } = this.props;
 
-        let defaultIdentity;
-        if (identities) {
-            defaultIdentity = provider ?
-                identities.find(matchProviderById(provider)).id
-                : identities.first().id;
+        let identities = IdentityStore.getAll();
 
-            identity = stateIdentity ?
-                stateIdentity : defaultIdentity;
-        }
+        let identity = stateIdentity ?
+            stateIdentity : defaultIdentity(provider, identities);
 
         return {
             identity
@@ -58,13 +61,8 @@ export default React.createClass({
         if (this.isMounted()) this.setState(this.getState());
     },
 
-    componentDidMount: function() {
-        stores.IdentityStore.addChangeListener(this.updateState);
-        stores.ResourceRequestStore.addChangeListener(this.updateState);
-    },
-
-    componentWillUnmount: function() {
-        stores.IdentityStore.removeChangeListener(this.updateState);
+    componentWillReceiveProps(props) {
+        this.updateState();
     },
 
     isSubmittable: function() {
@@ -151,10 +149,19 @@ export default React.createClass({
     },
 
     renderBody: function() {
-        var identities = stores.IdentityStore.getAll(),
-            instances = stores.InstanceStore.getAll(),
-            username = stores.ProfileStore.get().get("username"),
-            requests = stores.ResourceRequestStore.findResourceRequestsWhere({
+        const { 
+            subscriptions: { 
+                IdentityStore,
+                InstanceStore,
+                ProfileStore,
+                ResourceRequestStore,
+            }
+        } = this.props;
+
+        var identities = IdentityStore.getAll(),
+            instances = InstanceStore.getAll(),
+            username = ProfileStore.get().get("username"),
+            requests = ResourceRequestStore.findResourceRequestsWhere({
                 "created_by.username": username
             });
 
@@ -241,3 +248,10 @@ export default React.createClass({
         );
     }
 });
+
+export default subscribe(RequestMoreResourcesModal, [
+    "IdentityStore",
+    "ResourceRequestStore",
+    "InstanceStore",
+    "ProfileStore",
+]);
