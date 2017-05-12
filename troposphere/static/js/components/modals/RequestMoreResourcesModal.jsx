@@ -2,7 +2,7 @@ import React from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import BootstrapModalMixin from "components/mixins/BootstrapModalMixin";
 import AUCalculator from "components/common/AUCalculator";
-import subscribe from "utilities/subscribe";
+import stores from "stores";
 import globals from "globals";
 
 // We can partially apply this function with the provider
@@ -11,46 +11,43 @@ function matchProviderById(provider, item) {
     return item => item.get("provider").id === provider.id
 }
 
-function defaultIdentity(provider, identities) {
-    let defaultIdentity = null;
-    if (identities) {
-        defaultIdentity = provider ?
-            identities.find(matchProviderById(provider)).id
-            : identities.first().id;
-    }
-
-    return defaultIdentity
-};
-
-const RequestMoreResourcesModal = React.createClass({
+export default React.createClass({
     displayName: "RequestMoreResourcesModal",
 
     mixins: [BootstrapModalMixin],
 
     getInitialState: function() {
-        const { provider, subscriptions: { IdentityStore }} = this.props;
-        let identities = IdentityStore.getAll();
+        const { provider } = this.props;
+        let identities = stores.IdentityStore.getAll();
 
+        let defaultIdentity;
+        if (identities) {
+            defaultIdentity = provider ?
+                identities.find(matchProviderById(provider)).id
+                : identities.first().id;
+        }
         return {
-            identity: defaultIdentity(provider, identities),
+            identity: defaultIdentity,
             resources: "",
             reason: ""
         };
     },
 
     getState: function() {
+        const { provider } = this.props;
         const { identity: stateIdentity } = this.state;
-        const { 
-            provider, 
-            subscriptions: {
-                IdentityStore,
-            }
-        } = this.props;
+        let identities = stores.IdentityStore.getAll();
+        let identity = null;
 
-        let identities = IdentityStore.getAll();
+        let defaultIdentity;
+        if (identities) {
+            defaultIdentity = provider ?
+                identities.find(matchProviderById(provider)).id
+                : identities.first().id;
 
-        let identity = stateIdentity ?
-            stateIdentity : defaultIdentity(provider, identities);
+            identity = stateIdentity ?
+                stateIdentity : defaultIdentity;
+        }
 
         return {
             identity
@@ -61,8 +58,13 @@ const RequestMoreResourcesModal = React.createClass({
         if (this.isMounted()) this.setState(this.getState());
     },
 
-    componentWillReceiveProps(props) {
-        this.updateState();
+    componentDidMount: function() {
+        stores.IdentityStore.addChangeListener(this.updateState);
+        stores.ResourceRequestStore.addChangeListener(this.updateState);
+    },
+
+    componentWillUnmount: function() {
+        stores.IdentityStore.removeChangeListener(this.updateState);
     },
 
     isSubmittable: function() {
@@ -149,19 +151,10 @@ const RequestMoreResourcesModal = React.createClass({
     },
 
     renderBody: function() {
-        const { 
-            subscriptions: { 
-                IdentityStore,
-                InstanceStore,
-                ProfileStore,
-                ResourceRequestStore,
-            }
-        } = this.props;
-
-        var identities = IdentityStore.getAll(),
-            instances = InstanceStore.getAll(),
-            username = ProfileStore.get().get("username"),
-            requests = ResourceRequestStore.findResourceRequestsWhere({
+        var identities = stores.IdentityStore.getAll(),
+            instances = stores.InstanceStore.getAll(),
+            username = stores.ProfileStore.get().get("username"),
+            requests = stores.ResourceRequestStore.findResourceRequestsWhere({
                 "created_by.username": username
             });
 
@@ -248,10 +241,3 @@ const RequestMoreResourcesModal = React.createClass({
         );
     }
 });
-
-export default subscribe(RequestMoreResourcesModal, [
-    "IdentityStore",
-    "ResourceRequestStore",
-    "InstanceStore",
-    "ProfileStore",
-]);
