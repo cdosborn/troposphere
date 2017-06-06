@@ -6,7 +6,7 @@ export default React.createClass({
     displayName: "IdentitySelect",
 
     propTypes: {
-        identityId: React.PropTypes.number,
+        identityId: React.PropTypes.string,
         providers: React.PropTypes.instanceOf(Backbone.Collection).isRequired,
         identities: React.PropTypes.instanceOf(Backbone.Collection).isRequired,
         onChange: React.PropTypes.func.isRequired

@@ -392,7 +392,7 @@ export default React.createClass({
     onRequestResources: function() {
         this.hide();
         modals.HelpModals.requestMoreResources({
-            identity: this.state.identityProvider.id
+            identity: this.state.identityProvider.get('id')
         });
     },
 

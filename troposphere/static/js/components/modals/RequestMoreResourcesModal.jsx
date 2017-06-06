@@ -19,7 +19,7 @@ export default React.createClass({
         let identities = stores.IdentityStore.getAll();
         let defaultIdentity;
         if (identities) {
-            defaultIdentity = identities.first().id;
+            defaultIdentity = identities.first().get('id');
         }
 
         return {
@@ -34,7 +34,7 @@ export default React.createClass({
         let identities = stores.IdentityStore.getAll();
 
         if (!identity && identities) {
-            this.setState({ identity: identities.first().id })
+            this.setState({ identity: identities.first().get('id') })
         }
 
         this.forceUpdate()
@@ -110,7 +110,7 @@ export default React.createClass({
 
     renderIdentity: function(identity) {
         return (
-        <option key={identity.id} value={identity.id}>
+        <option key={identity.get('id')} value={identity.get('id')}>
             {identity.get("provider").name}
         </option>
         )

@@ -2,13 +2,13 @@ import Backbone from "backbone";
 import featureFlags from "utilities/featureFlags";
 
 function isRelevant(model, identityId) {
-    // using double ~ to convert string to number
     return model.id && model.get("identity") &&
-    ~~model.get("identity").id === identityId;
-
+      model.get("identity").uuid === identityId;
 }
 
 export default Backbone.Model.extend({
+    idAttribute: "uuid",
+
     parse: function(attributes) {
 
         // put default allocation data here since it isn't
