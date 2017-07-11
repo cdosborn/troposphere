@@ -62,6 +62,7 @@ _.extend(Store.prototype, Backbone.Events, {
     emitChange: function() {
         this.trigger(CHANGE_EVENT);
     },
+
     buildQueryStringFromQueryParams: function(queryParams) {
         var queryString = Object.keys(queryParams).sort().map(function(key, index) {
             return key + "=" + queryParams[key];

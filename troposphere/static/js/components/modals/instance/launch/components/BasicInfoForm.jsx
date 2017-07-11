@@ -38,8 +38,12 @@ export default React.createClass({
         if (missingName()) return "missing";
     },
 
+    onNameChange(e) {
+        this.props.onNameChange(e.target.value);
+    },
+
     render: function() {
-        const { 
+        const {
             imageVersion,
             project,
             projectList,
@@ -55,7 +59,7 @@ export default React.createClass({
 
         if (showValidationErr) {
             switch (this.nameError()) {
-                case "invalid": 
+                case "invalid":
                     errorMessage = invalidMessage;
                     hasErrorClass = "has-error";
                     break;
@@ -78,8 +82,7 @@ export default React.createClass({
                     id="instanceName"
                     value={instanceName}
                     ref="nameInput"
-                    onChange={this.props.onNameChange}
-                    onBlur={this.props.onNameBlur} />
+                    onChange={this.onNameChange} />
                 <span className="help-block">{errorMessage}</span>
             </div>
             <div className="form-group">

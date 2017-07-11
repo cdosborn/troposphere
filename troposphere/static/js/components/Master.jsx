@@ -11,6 +11,10 @@ import modernizrTest from "components/modals/unsupported/modernizrTest";
 import NullProject from "models/NullProject";
 import noAllocationSource from "modals/allocationSource/noAllocationSource";
 
+// HACKS
+import ModalHelpers from "components/modals/ModalHelpers";
+import InstanceLaunchWizardModal from "components/modals/instance/InstanceLaunchWizardModal";
+
 import Raven from "raven-js";
 
 import Router from "react-router";
@@ -106,6 +110,12 @@ export default React.createClass({
                 ? actions.NullProjectActions.migrateResourcesIntoProject(nullProject)
                 : actions.NullProjectActions.moveAttachedVolumesIntoCorrectProject();
         })
+
+        // HACKS
+        let props = {
+            initialView: "IMAGE_VIEW"
+        }
+        ModalHelpers.renderModal(InstanceLaunchWizardModal, props, () => {})
     },
 
     loadRavenData: function() {
@@ -144,19 +154,7 @@ export default React.createClass({
         var maintenanceMessages = stores.MaintenanceMessageStore.getAll() || new Backbone.Collection(),
             marginTop = maintenanceMessages.length * 24 + "px";
 
-        return (
-        <div>
-            <Header profile={ context.profile }
-                    currentRoute={ ['projects'] }
-                    maintenanceMessages={ maintenanceMessages } />
-            <div id="main" style={ { 'marginTop': marginTop } }>
-                {this.props.children}
-            </div>
-            <Footer text={globals.SITE_FOOTER}
-                    link={globals.SITE_FOOTER_LINK}
-                    profile={context.profile} />
-        </div>
-        );
+        return (<div></div>);
     }
 
 });

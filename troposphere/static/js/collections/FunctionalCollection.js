@@ -20,4 +20,5 @@ export default {
     csome: fix(new Backbone.Collection().some),
     cwhere: fix(new Backbone.Collection().where),
     csort: fix(new Backbone.Collection().sort),
+    cshuffle: fix(new Backbone.Collection().shuffle)
 }

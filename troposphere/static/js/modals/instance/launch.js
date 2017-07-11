@@ -14,13 +14,13 @@ export default {
                 name = launchData.name,
                 project = launchData.project;
 
-            actions.InstanceActions.launch({
-                project: project,
-                instanceName: name,
-                identity: identity,
-                size: size,
-                version: version
-            });
+            // actions.InstanceActions.launch({
+            //     project: project,
+            //     instanceName: name,
+            //     identity: identity,
+            //     size: size,
+            //     version: version
+            // });
         });
     }
 };

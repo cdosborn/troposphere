@@ -7,7 +7,8 @@ import { Router,
 
 import globals from "globals";
 
-import Master from "./components/Master";
+import Master from "./components/WizardMaster";
+/* import Master from "./components/Master"; */
 import BadgeMaster from "./components/badges/BadgeMaster";
 import MyBadges from "./components/badges/MyBadges";
 import AllBadges from "./components/badges/AllBadges";
