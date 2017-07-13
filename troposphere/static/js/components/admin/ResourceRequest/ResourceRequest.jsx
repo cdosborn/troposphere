@@ -46,6 +46,7 @@ export default React.createClass({
     onApprove(view) {
         let { selectedRequest: request } = this.props;
         let {
+            quota: storeQuota,
             allocationSources: storeAllocations,
             identity,
             statuses
@@ -56,12 +57,18 @@ export default React.createClass({
         let quotas = stores.QuotaStore.getAll();
         let response = view.response;
 
-        // Search for quota in store based on attributes not id
-        let updatedQuota = quotas.findWhere(_.omit(quota, "id"))
-        if (!updatedQuota) {
+        let quotaChanged =
+            // Test if some of the attributes are not equal
+            storeQuota.keys().some(attr => storeQuota.get(attr) !== quota[attr]);
 
-            // Updated quota doesn't exist, so create one
-            updatedQuota = new Quota(_.omit(quota, "id"));
+        let updatedQuota;
+        if (quotaChanged) {
+            updatedQuota =
+                // Search for quota in store based on attributes not id
+                quotas.findWhere(_.omit(quota, "id")) ||
+
+                // Updated quota doesn't exist, so create one
+                new Quota(_.omit(quota, "id"));
         }
 
         let changedAllocations = allocationSources
