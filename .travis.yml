@@ -34,10 +34,5 @@
     - export DJANGO_SETTINGS_MODULE=troposphere.settings
 
   script:
-    - ./travis/check_properly_generated_requirements.sh
-    - ./manage.py makemigrations --dry-run --check
-    - ./manage.py test
-    - npm run build
-    - npm run lint
       # The format command will error if there are unformatted files
     - echo "Check that all files are formatted" && npm run format -- -l
